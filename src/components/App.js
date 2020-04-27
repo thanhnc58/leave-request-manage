@@ -2,39 +2,46 @@ import React from 'react';
 import '../App.css';
 
 import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
+    BrowserRouter as Router,
+    Switch,
+    Route,
 } from "react-router-dom";
 import NormalLoginForm from "./Authentication";
 import UserContextProvider from "./UserContext";
 import Layout from "./Layout";
 import Home from "./Home";
 import Demo from "./LeaveRequest";
+import Sidebar from "./Sidebar";
+import CreateRequest from "./CreateRequest";
+
 
 function App() {
-  return (
-      <UserContextProvider>
+    return (
+        <UserContextProvider>
 
-          <Router>
-              <Switch>
-              <Route exact path="/" component={NormalLoginForm} />
+            <Router>
+                <Switch>
+                    <Route exact path="/" component={NormalLoginForm}/>
 
-              <Layout>
-                  {/* A <Switch> looks through its children <Route>s and
-                    renders the first one that matches the current URL. */}
-                  <Switch>
-                    <Route exact path="/home" component={Home} />
-                      <Route exact path="/demo" component={Demo} />
-                    <Route path="*" component={() => "404 NOT FOUND"} />
+                    <Layout>
+                        <Sidebar>
+                            <Switch>
+                                <Route exact path="/home" component={Home}/>
+                                <Route exact path="/request-list" component={Demo}/>
+                                <Route exact path="/create-request" component={CreateRequest}/>
+                            </Switch>
+                        </Sidebar>
+                        {/*<Switch>*/}
+                        {/*    <Route exact path="/create-request" component={CreateRequest}/>*/}
+                        {/*</Switch>*/}
+                    </Layout>
 
-                  </Switch>
-              </Layout>
-                  </Switch>
-          </Router>
+                    <Route path="*" component={() => "404 NOT FOUND"}/>
+                </Switch>
+            </Router>
 
-      </UserContextProvider>
-   );
+        </UserContextProvider>
+    );
 }
 
 export default App;

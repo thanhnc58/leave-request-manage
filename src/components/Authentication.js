@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 import { useHistory } from "react-router-dom";
 import 'antd/dist/antd.css';
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, Row } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import './authentication.css'
 import {userContext} from "./UserContext";
@@ -17,13 +17,14 @@ const NormalLoginForm = () => {
         if (exist) {
             let userObj = {"userName" : values.username, "role": role};
             localStorage.setItem("user", JSON.stringify(userObj));
-            history.push("/home");
+            history.push("/request-list");
             console.log('Received values of form: ', setUser(userObj));
         }
 
     };
 
     return (
+        <Row justify="center" align="middle">
         <Form
             name="normal_login"
             className="login-form"
@@ -65,6 +66,7 @@ const NormalLoginForm = () => {
                 </Button>
             </Form.Item>
         </Form>
+        </Row>
     );
 };
 

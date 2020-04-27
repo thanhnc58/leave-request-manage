@@ -1,27 +1,35 @@
 import React, {useContext, useState} from 'react';
 import 'antd/dist/antd.css';
 import { Table, Tag } from 'antd';
-import removeRow, {getData} from "../mockData/LeaveRequest";
+import removeRow, {getData, updateStatus} from "../mockData/LeaveRequest";
 import {userContext} from "./UserContext";
+import constant from '../constant'
+
 
 const ActionButton = (pros) => {
     const [user] = useContext(userContext);
     const handleReject = () => {
-        let data = removeRow(pros.rowKey);
+        let data = updateStatus(pros.rowKey, constant.RequestAction.CANCEL, user.role);
         pros.setRequest(data)
     };
-    if (user.role === 1) {
+    const handleAccept = () => {
+        let data = updateStatus(pros.rowKey, constant.RequestAction.ACCEPT, user.role);
+        pros.setRequest(data)
+    };
+    if (user.role === constant.Role.ADMIN) {
         return <div>
+            <a style={{ marginRight: 16 }} onClick={handleAccept}>
+                Accept
+            </a>
             <a onClick={handleReject}>
-                accept
+                Reject
             </a>
         </div>
     } else {
         return <div>
             <a onClick={handleReject}>
-                cancel
+                Cancel
             </a>
-
         </div>
     }
 };
@@ -39,9 +47,13 @@ const Demo = () => {
             dataIndex: 'status',
             key: 'status',
             render: (status) => {
-                let color = 'red';
-                if (status === 'accepted') {
+                let color = '';
+                if (status === constant.RequestStatus.APPROVED) {
                     color = 'green'
+                } else if (status === constant.RequestStatus.CANCELED || status === constant.RequestStatus.REJECTED) {
+                    color = 'red'
+                } else if (status === constant.RequestStatus.CANCELING) {
+                    color = 'red'
                 }
                 return (
                     <Tag color={color} key={status}>
