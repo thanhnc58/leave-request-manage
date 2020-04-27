@@ -1,13 +1,26 @@
-import React from 'react';
+import React, {useContext} from 'react';
+import { useHistory } from "react-router-dom";
 import 'antd/dist/antd.css';
 import { Form, Input, Button } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import './authentication.css'
+import {userContext} from "./UserContext";
+import authenticateUser from "../mockData/User";
+
 
 const NormalLoginForm = () => {
+    const [ , setUser] = useContext(userContext);
+    const history = useHistory();
     const onFinish = values => {
-        localStorage.setItem('username', values['username']);
-        console.log('Received values of form: ', values['username']);
+        const {exist, role} = authenticateUser(values.username, values.password);
+        console.log(exist);
+        if (exist) {
+            let userObj = {"userName" : values.username, "role": role};
+            localStorage.setItem("user", JSON.stringify(userObj));
+            history.push("/home");
+            console.log('Received values of form: ', setUser(userObj));
+        }
+
     };
 
     return (
