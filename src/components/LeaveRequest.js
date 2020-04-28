@@ -1,7 +1,8 @@
 import React, {useContext, useState} from 'react';
 import 'antd/dist/antd.css';
 import { Table, Tag } from 'antd';
-import removeRow, {getData, updateStatus} from "../mockData/LeaveRequest";
+import './LeaveRequest.css'
+import {getDataByUser, getData, updateStatus, getLeave, addLeave} from "../mockData/LeaveRequest";
 import {userContext} from "./UserContext";
 import constant from '../constant'
 
@@ -9,23 +10,45 @@ import constant from '../constant'
 const ActionButton = (pros) => {
     const [user] = useContext(userContext);
     const handleReject = () => {
-        let data = updateStatus(pros.rowKey, constant.RequestAction.CANCEL, user.role);
+        updateStatus(pros.rowKey, constant.RequestAction.CANCEL, user.role);
+        let data = getDataByUser(user);
         pros.setRequest(data)
     };
     const handleAccept = () => {
-        let data = updateStatus(pros.rowKey, constant.RequestAction.ACCEPT, user.role);
+        updateStatus(pros.rowKey, constant.RequestAction.ACCEPT, user.role);
+        let data = getDataByUser(user);
+        pros.setLeave(getLeave());
         pros.setRequest(data)
     };
+
+    let data = getData();
+    if (!data || data.length === 0) {
+        return null
+    }
     if (user.role === constant.Role.ADMIN) {
-        return <div>
-            <a style={{ marginRight: 16 }} onClick={handleAccept}>
-                Accept
-            </a>
-            <a onClick={handleReject}>
-                Reject
-            </a>
-        </div>
+        if (data[pros.rowKey].status === constant.RequestStatus.CREATED){
+            return <div>
+                <a style={{ marginRight: 16 }} onClick={handleAccept}>
+                    Accept
+                </a>
+                <a onClick={handleReject}>
+                    Reject
+                </a>
+            </div>
+        } else if (data[pros.rowKey].status === constant.RequestStatus.CANCELING){
+            return <div>
+                <a style={{ marginRight: 16 }} onClick={handleAccept}>
+                    Accept
+                </a>
+            </div>
+        } else {
+            return <div />
+        }
     } else {
+        console.log(data, pros.rowKey);
+        if (data[pros.rowKey].status !== constant.RequestStatus.APPROVED){
+            return <div />
+        }
         return <div>
             <a onClick={handleReject}>
                 Cancel
@@ -35,7 +58,17 @@ const ActionButton = (pros) => {
 };
 
 const Demo = () => {
-    const [request, setRequest] = useState(getData());
+    const [user] = useContext(userContext);
+    let data = {};
+    if (user.role === constant.Role.ADMIN) {
+        data = getData()
+    } else {
+        data = getDataByUser(user);
+        console.log(data);
+    }
+    const [request, setRequest] = useState(data);
+    const [leave, setLeave] = useState(getLeave());
+
     const columns = [
         { title: 'Name', dataIndex: 'name', key: 'name' },
         { title: 'Start date', dataIndex: 'start', key: 'age' },
@@ -53,7 +86,7 @@ const Demo = () => {
                 } else if (status === constant.RequestStatus.CANCELED || status === constant.RequestStatus.REJECTED) {
                     color = 'red'
                 } else if (status === constant.RequestStatus.CANCELING) {
-                    color = 'red'
+                    color = 'yellow'
                 }
                 return (
                     <Tag color={color} key={status}>
@@ -66,11 +99,20 @@ const Demo = () => {
         },
         { title: 'Taken days', dataIndex: 'takenDay', key: 'takenDay' },
         {
+            title: 'Leave Left',
+            dataIndex: 'name',
+            render: (name) => {
+                return <div>
+                    {leave?.[name] || 0}
+                </div>
+            },
+        },
+        {
             title: 'Action',
             dataIndex: 'key',
             key: 'x',
             render: (key) => {
-                return <ActionButton rowKey={key} setRequest={setRequest}>
+                return <ActionButton rowKey={key} setRequest={setRequest} setLeave={setLeave}>
                     delete
                 </ActionButton>
             },
@@ -84,6 +126,12 @@ const Demo = () => {
             rowExpandable: record => record.name !== 'Not Expandable',
         }}
         dataSource={request}
+        tableLayout={"fixed"}
+        rowClassName={(a,i) => {
+            if (leave[a.name] > a.takenDay) {
+                return 'highlight'
+            }
+        }}
     />
 };
 

@@ -7,7 +7,7 @@ import {
 import './CreateRequest.css'
 import {userContext} from "./UserContext";
 import constant from '../constant'
-import {addData, getData} from "../mockData/LeaveRequest";
+import {addData} from "../mockData/LeaveRequest";
 import {useHistory} from "react-router-dom";
 const {RangePicker} = DatePicker;
 const { TextArea } = Input;
@@ -92,7 +92,7 @@ const CreateRequest = () => {
                     Submit
                 </Button>
 
-                <Button htmlType="button">
+                <Button htmlType="button" onClick={() => {history.goBack()}}>
                     cancel
                 </Button>
             </Form.Item>

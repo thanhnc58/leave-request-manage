@@ -21,19 +21,28 @@ const Sidebar = (pros) => {
     const toggle = () => {
         setSidebar({collapsed: !sidebar.collapsed})
     };
+    const [selected, setSelected] = useState('1');
     const [user, setUser] = useContext(userContext);
     const history = useHistory();
 
+    let isUser = user.role === constant.Role.USER;
     const logout = () => {
+        setSelected('4');
         setUser({});
-        localStorage.removeItem('user')
+        localStorage.removeItem('user');
         history.push("/login");
     };
     const home = () => {
+        setSelected('2');
         history.push("/home");
     };
     const requestList = () => {
+        setSelected('1');
         history.push("/request-list");
+    };
+    const statistic = () => {
+        setSelected('3');
+        history.push("/statistic");
     };
 
     const CreateRequestList = () => {
@@ -46,7 +55,52 @@ const Sidebar = (pros) => {
         }
         return null
     };
+    let siderList = [
+        ["1",requestList,"Request List"],
+        ["2",home,"Holiday"],
+        ["3",statistic,"Statistic"]
 
+    ];
+
+    const AdminMenu = () => {
+        return <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']} selectedKeys={[selected]}>
+            <Menu.Item key="1" onClick={requestList}>
+                <TableOutlined/>
+                <span>Request list</span>
+            </Menu.Item>
+            <Menu.Item key="2" onClick={home}>
+                <VideoCameraOutlined/>
+                <span>Holiday</span>
+            </Menu.Item>
+            <Menu.Item key="3" onClick={statistic}>
+                <UploadOutlined/>
+                <span>Statistic</span>
+            </Menu.Item>
+            <Menu.Item key="4" onClick={logout}>
+                <LogoutOutlined/>
+                <span>Log out</span>
+            </Menu.Item>
+        </Menu>
+    };
+
+    const UserMenu = () => {
+        return <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']} selectedKeys={[selected]}>
+            <Menu.Item key="1" onClick={requestList}>
+                <TableOutlined/>
+                <span>Request list</span>
+            </Menu.Item>
+            <Menu.Item key="3" onClick={statistic}>
+                <UploadOutlined/>
+                <span>Statistic</span>
+            </Menu.Item>
+            <Menu.Item key="4" onClick={logout}>
+                <LogoutOutlined/>
+                <span>Log out</span>
+            </Menu.Item>
+        </Menu>
+    };
+
+    let ConMenu = isUser ? <UserMenu /> : <AdminMenu />
     return (
         <Layout>
             <Sider
@@ -55,25 +109,10 @@ const Sidebar = (pros) => {
                 collapsed={sidebar.collapsed}
                 className={"site-style"}
             >
-                <div className="logo"/>
-                <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']} >
-                    <Menu.Item key="1" onClick={requestList}>
-                        <TableOutlined/>
-                        <span>Request list</span>
-                    </Menu.Item>
-                    <Menu.Item key="2" onClick={home} >
-                        <VideoCameraOutlined/>
-                        <span>Home</span>
-                    </Menu.Item>
-                    <Menu.Item key="3">
-                        <UploadOutlined/>
-                        <span>Statistic</span>
-                    </Menu.Item>
-                    <Menu.Item key="4" onClick={logout}>
-                        <LogoutOutlined/>
-                        <span>Log out</span>
-                    </Menu.Item>
-                </Menu>
+                <div className="logo">
+
+                </div>
+                {ConMenu}
             </Sider>
             <Layout className="site-layout">
                 <Header className="site-layout-background" style={{padding: 0}}>

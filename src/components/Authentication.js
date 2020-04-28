@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import { useHistory } from "react-router-dom";
+import { useHistory, Redirect } from "react-router-dom";
 import 'antd/dist/antd.css';
 import { Form, Input, Button, Row } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
@@ -9,7 +9,7 @@ import authenticateUser from "../mockData/User";
 
 
 const NormalLoginForm = () => {
-    const [ , setUser] = useContext(userContext);
+    const [user, setUser] = useContext(userContext);
     const history = useHistory();
     const onFinish = values => {
         const {exist, role} = authenticateUser(values.username, values.password);
@@ -17,11 +17,15 @@ const NormalLoginForm = () => {
         if (exist) {
             let userObj = {"userName" : values.username, "role": role};
             localStorage.setItem("user", JSON.stringify(userObj));
-            history.push("/request-list");
             console.log('Received values of form: ', setUser(userObj));
+            // history.push("/request-list");
         }
 
     };
+    console.log(user);
+    if (user.userName){
+        return <Redirect to={"/request-list"}/>
+    }
 
     return (
         <Row justify="center" align="middle">

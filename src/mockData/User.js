@@ -7,6 +7,10 @@ const users = {
     "user": {
         "password" : "1234",
         "role" : 0
+    },
+    "user2": {
+        "password" : "1234",
+        "role" : 0
     }
 };
 

@@ -9,10 +9,11 @@ import {
 import NormalLoginForm from "./Authentication";
 import UserContextProvider from "./UserContext";
 import Layout from "./Layout";
-import Home from "./Home";
+import Holiday from "./Holiday";
 import Demo from "./LeaveRequest";
 import Sidebar from "./Sidebar";
 import CreateRequest from "./CreateRequest";
+import Statistic from "./Statistic";
 
 
 function App() {
@@ -26,9 +27,10 @@ function App() {
                     <Layout>
                         <Sidebar>
                             <Switch>
-                                <Route exact path="/home" component={Home}/>
+                                <Route exact path="/home" component={Holiday}/>
                                 <Route exact path="/request-list" component={Demo}/>
                                 <Route exact path="/create-request" component={CreateRequest}/>
+                                <Route exact path="/statistic" component={Statistic}/>
                             </Switch>
                         </Sidebar>
                         {/*<Switch>*/}
