@@ -9,6 +9,7 @@ import {userContext} from "./UserContext";
 import constant from '../constant'
 import {addData} from "../mockData/LeaveRequest";
 import {useHistory} from "react-router-dom";
+import {GetNumberTakenDay} from '../mockData/Holiday'
 const {RangePicker} = DatePicker;
 const { TextArea } = Input;
 
@@ -18,13 +19,10 @@ const CreateRequest = () => {
 
     const onFinish = (values) => {
         console.log( values.date[1].format('YYYY-MM-DD'));
-        let takenDay = values.date[1].diff(values.date[0], 'days') + 1
-        if (values.halfStart){
-            takenDay -= 0.5
-        }
-        if (values.halfEnd) {
-            takenDay -= 0.5
-        }
+
+        let start = parseInt(values.date[0].format("DDDD"));
+        let end = parseInt(values.date[1].format("DDDD"));
+        let takenDay = GetNumberTakenDay(start, end, values.halfStart, values.halfEnd);
 
         let requestObj = {
             name : user.userName,

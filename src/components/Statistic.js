@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 import 'antd/dist/antd.css';
 import { Table} from 'antd';
-import {getLeave, getLeaveByUser} from "../mockData/LeaveRequest";
+import {getLeave, getLeaveByUser, getTotalLeave} from "../mockData/LeaveRequest";
 import {userContext} from "./UserContext";
 import constant from '../constant'
 
@@ -31,7 +31,7 @@ const Statistic = () => {
             width: '30%',
         },
         {
-            title: 'Leave Left',
+            title: 'Total leave days',
             dataIndex: 'leaveLeft',
             width: '30%',
         }

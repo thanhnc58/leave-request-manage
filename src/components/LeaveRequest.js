@@ -2,9 +2,10 @@ import React, {useContext, useState} from 'react';
 import 'antd/dist/antd.css';
 import { Table, Tag } from 'antd';
 import './LeaveRequest.css'
-import {getDataByUser, getData, updateStatus, getLeave, addLeave} from "../mockData/LeaveRequest";
+import {getDataByUser, getData, updateStatus, getLeave, addLeave, getTotalLeave} from "../mockData/LeaveRequest";
 import {userContext} from "./UserContext";
 import constant from '../constant'
+import moment from "moment";
 
 
 const ActionButton = (pros) => {
@@ -71,14 +72,37 @@ const Demo = () => {
 
     const columns = [
         { title: 'Name', dataIndex: 'name', key: 'name' },
-        { title: 'Start date', dataIndex: 'start', key: 'age' },
-        { title: 'End date', dataIndex: 'end', key: 'address' },
+        {
+            title: 'Start date',
+            dataIndex: 'start',
+            key: 'age',
+            sorter: (a, b) => moment(a.start) - moment(b.start),
+            sortDirections: ['descend', 'ascend'],
+        },
+        {
+            title: 'End date',
+            dataIndex: 'end',
+            key: 'address',
+            sorter: (a, b) => moment(a.end) - moment(b.end),
+            sortDirections: ['descend', 'ascend'],
+        },
         { title: 'Take a half at start date', dataIndex: 'halfStart', key: 'halfStart', textWrap: 'word-break' , width: 120},
         { title: 'Take a half day at end date', dataIndex: 'halfEnd', key: 'halfEnd', textWrap: 'word-break' , width: 130 },
         {
             title: 'status',
             dataIndex: 'status',
             key: 'status',
+            filters: [
+                {
+                    text: 'APPROVED',
+                    value: constant.RequestStatus.APPROVED,
+                },
+                {
+                    text: 'CREATED',
+                    value: constant.RequestStatus.CREATED,
+                }
+            ],
+            onFilter: (value, record) => record.status.indexOf(value) === 0,
             render: (status) => {
                 let color = '';
                 if (status === constant.RequestStatus.APPROVED) {
@@ -102,8 +126,11 @@ const Demo = () => {
             title: 'Leave Left',
             dataIndex: 'name',
             render: (name) => {
+                let curLeave = leave?.[name] || 0;
+                let leaveLeft = getTotalLeave() - curLeave;
+                leaveLeft = leaveLeft < 0 ? 0 : leaveLeft;
                 return <div>
-                    {leave?.[name] || 0}
+                    {leaveLeft}
                 </div>
             },
         },
@@ -128,7 +155,9 @@ const Demo = () => {
         dataSource={request}
         tableLayout={"fixed"}
         rowClassName={(a,i) => {
-            if (leave[a.name] > a.takenDay) {
+            let curLeave = leave?.[a.name] || 0;
+            let leaveLeft = getTotalLeave() - curLeave;
+            if (leaveLeft < a.takenDay) {
                 return 'highlight'
             }
         }}
