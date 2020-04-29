@@ -1,4 +1,7 @@
 import moment from "moment";
+import {getData, getLeave} from "./LeaveRequest";
+import constant from '../constant'
+
 
 export function getHoliday() {
     let data = localStorage.getItem("holiday");
@@ -76,4 +79,41 @@ export function GetNumberTakenDay(startLeave, endLeave, halfStart, halfEnd) {
     }
     console.log(holidays);
     return takenDay;
+}
+
+export function getDayDetail(date) {
+    date = date.set("hour", 10);
+    let holidays = getHoliday();
+    console.log(holidays, "tt");
+    let matchHoliday = [];
+    for (let holiday of holidays){
+        let [start, end] = holiday.date;
+        let [t1, t2] = [moment(start).set("hour", 5),moment(end).set("hour", 15) ];
+
+        if (t1 <= date && t2 >= date){
+            matchHoliday.push(holiday.name)
+        }
+        console.log(date, t1, t2, matchHoliday ,"ggg2");
+    }
+
+    let matchRequest = [];
+    if (date.day() === 0 || date.day() === 6){
+        return {
+            matchHoliday,
+            matchRequest
+        }
+    }
+
+    let requests = getData();
+    for (let request of requests) {
+        let [t1, t2] = [moment(request.start).set("hour", 5),moment(request.end).set("hour", 15) ];
+        if (t1 <= date &&  t2 >= date && (request.status === constant.RequestStatus.APPROVED || request.status === constant.RequestStatus.CANCELING)){
+            matchRequest.push(request.name)
+        }
+    }
+
+    return {
+        matchHoliday,
+        matchRequest
+    }
 }

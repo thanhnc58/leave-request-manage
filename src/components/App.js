@@ -14,6 +14,7 @@ import Demo from "./LeaveRequest";
 import Sidebar from "./Sidebar";
 import CreateRequest from "./CreateRequest";
 import Statistic from "./Statistic";
+import CustomCalendar from "./CustomCalendar";
 
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
                                 <Route exact path="/request-list" component={Demo}/>
                                 <Route exact path="/create-request" component={CreateRequest}/>
                                 <Route exact path="/statistic" component={Statistic}/>
+                                <Route exact path="/calendar" component={CustomCalendar}/>
                             </Switch>
                         </Sidebar>
                         {/*<Switch>*/}

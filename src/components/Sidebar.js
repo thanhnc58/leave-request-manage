@@ -10,6 +10,7 @@ import {
     VideoCameraOutlined,
     UploadOutlined,
     LogoutOutlined,
+    CalendarOutlined,
 } from '@ant-design/icons';
 import {userContext} from "./UserContext";
 import constant from '../constant'
@@ -27,7 +28,7 @@ const Sidebar = (pros) => {
 
     let isUser = user.role === constant.Role.USER;
     const logout = () => {
-        setSelected('4');
+        setSelected('5');
         setUser({});
         localStorage.removeItem('user');
         history.push("/login");
@@ -45,6 +46,11 @@ const Sidebar = (pros) => {
         history.push("/statistic");
     };
 
+    const customCalendar = () => {
+        setSelected('4');
+        history.push("/calendar");
+    };
+
     const CreateRequestList = () => {
         if (user.role === constant.Role.USER) {
             return <Button type="primary" onClick={() => {
@@ -55,12 +61,6 @@ const Sidebar = (pros) => {
         }
         return null
     };
-    let siderList = [
-        ["1",requestList,"Request List"],
-        ["2",home,"Holiday"],
-        ["3",statistic,"Statistic"]
-
-    ];
 
     const AdminMenu = () => {
         return <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']} selectedKeys={[selected]}>
@@ -76,7 +76,11 @@ const Sidebar = (pros) => {
                 <UploadOutlined/>
                 <span>Statistic</span>
             </Menu.Item>
-            <Menu.Item key="4" onClick={logout}>
+            <Menu.Item key="4" onClick={customCalendar}>
+                <CalendarOutlined />
+                <span>Calendar</span>
+            </Menu.Item>
+            <Menu.Item key="5" onClick={logout}>
                 <LogoutOutlined/>
                 <span>Log out</span>
             </Menu.Item>
@@ -93,7 +97,11 @@ const Sidebar = (pros) => {
                 <UploadOutlined/>
                 <span>Statistic</span>
             </Menu.Item>
-            <Menu.Item key="4" onClick={logout}>
+            <Menu.Item key="4" onClick={customCalendar}>
+                <CalendarOutlined />
+                <span>Calendar</span>
+            </Menu.Item>
+            <Menu.Item key="5" onClick={logout}>
                 <LogoutOutlined/>
                 <span>Log out</span>
             </Menu.Item>
