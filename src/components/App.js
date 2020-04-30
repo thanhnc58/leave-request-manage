@@ -37,7 +37,6 @@ function App() {
                             </Switch>
                         </Sidebar>
                     </Layout>
-                    <Route path="*" component={() => "404 NOT FOUND"}/>
                 </Switch>
             </Router>
 

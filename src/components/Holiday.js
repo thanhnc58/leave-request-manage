@@ -148,7 +148,7 @@ const Holiday = () => {
                             Edit
                         </a>
                         <a disabled={editingKey !== ''} onClick={() => remove(record.key)}>
-                            delete
+                            Delete
                         </a>
                     </div>
                 );

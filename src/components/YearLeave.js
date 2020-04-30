@@ -135,7 +135,7 @@ const YearLeave = () => {
                             Edit
                         </a>
                         <a disabled={editingKey !== ''} onClick={() => remove(record)}>
-                            delete
+                            Delete
                         </a>
                     </div>
                 );

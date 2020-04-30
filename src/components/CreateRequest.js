@@ -8,7 +8,8 @@ import './CreateRequest.css'
 import {userContext} from "./UserContext";
 import constant from '../constant'
 import {addData, getDataByUser} from "../mockData/LeaveRequest";
-import {getNumberTakenDay} from '../mockData/Holiday'
+import {getHolidayDateArray, getNumberTakenDay} from '../mockData/Holiday'
+import moment from "moment";
 
 const {RangePicker} = DatePicker;
 const {TextArea} = Input;
@@ -44,7 +45,12 @@ const CreateRequest = (pros) => {
     };
 
     const [dates, setDates] = useState([]);
+    let holidays = getHolidayDateArray();
     const disabledDate = current => {
+        let index = parseInt(current.format("DDDD"));
+        if (holidays[index]){
+            return true
+        }
         if (!dates || dates.length === 0) {
             return false;
         }

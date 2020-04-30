@@ -81,6 +81,28 @@ export function getNumberTakenDay(from, to, halfStart, halfEnd) {
     return takenDay;
 }
 
+export function getHolidayDateArray() {
+    let data = getHoliday();
+    let holidays = [];
+
+    for (let i = 0; i <= 366; i++){
+        if (moment().dayOfYear(i).day() === 0 || moment().dayOfYear(i).day() === 6){
+            holidays.push(true)
+        } else {
+            holidays.push(false);
+        }
+    }
+    for (let days of data){
+        let [start, end] = days.date;
+        let x = parseInt(moment(start).format("DDDD"));
+        let y = parseInt(moment(end).format("DDDD"));
+        for (let j = x ; j <= y; j++){
+            holidays[j] = true
+        }
+    }
+    return holidays
+}
+
 // Return holidays or people who leaved on a specific day
 export function getDayDetail(date) {
     // We only care about compare date, so set a fixed time in case the date is equal
