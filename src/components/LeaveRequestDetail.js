@@ -103,7 +103,7 @@ const ExtraInfo = pros => {
                 <DescriptionItem title="Leave left" content={leaveLeft + ' days'}/>
             </Col>
             <Col span={12}>
-                <DescriptionItem title="Total leave" content={curLeave + ' days'} />
+                <DescriptionItem title="Leave Used" content={curLeave + ' days'} />
             </Col>
         </Row>
     </div>

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import 'antd/dist/antd.css';
 import './Holiday.css';
-import { Table, InputNumber, Popconfirm, Form,Button } from 'antd';
+import {Table, InputNumber, Popconfirm, Form, Button, Drawer} from 'antd';
 import {addYearLeave, deleteYearLeave, editYearLeave, getYearLeave} from "../mockData/YearLeave";
+import CreateYearLeave from "./CreateYearLeave";
 
 const originData = [];
 
@@ -52,6 +53,7 @@ const YearLeave = () => {
     const [form] = Form.useForm();
     const [data, setData] = useState(getYearLeave());
     const [editingKey, setEditingKey] = useState('');
+    const [drawerVisible, setDrawerVisible] = useState(false);
 
     const isEditing = record => record.year === editingKey;
 
@@ -134,9 +136,9 @@ const YearLeave = () => {
                         <a style={{ marginRight: 16 }} disabled={editingKey !== ''} onClick={() => edit(record)}>
                             Edit
                         </a>
-                        <a disabled={editingKey !== ''} onClick={() => remove(record)}>
-                            Delete
-                        </a>
+                        <Popconfirm title="Sure to delete?" disabled={editingKey !== ''} onConfirm={() => remove(record)} >
+                            <a>Delete</a>
+                        </Popconfirm>
                     </div>
                 );
             },
@@ -158,19 +160,35 @@ const YearLeave = () => {
         };
     });
 
+    const onCreate = () => {
+        setDrawerVisible(true)
+    };
+    const onClose = () => {
+        setDrawerVisible(false)
+    };
+
     const preparedData = Object.keys(data).map( key => data[key]);
 
     return (
         <Form form={form} component={false}>
             <Button
                 type="primary"
-                onClick={add}
+                onClick={onCreate}
                 style={{
                     marginBottom: 16,
                 }}
             >
                 Add a row
             </Button>
+            <Drawer
+                title="Create a new leave request"
+                width={300}
+                onClose={onClose}
+                visible={drawerVisible}
+                bodyStyle={{paddingBottom: 80}}
+            >
+                <CreateYearLeave form={form} setData={setData} setDrawerVisible={setDrawerVisible}/>
+            </Drawer>
             <Table
                 components={{
                     body: {

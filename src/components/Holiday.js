@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
 import 'antd/dist/antd.css';
 import './Holiday.css';
-import {Table, DatePicker, Popconfirm, Form, Button, message} from 'antd';
+import {Table, DatePicker, Popconfirm, Form, Button, message, Drawer} from 'antd';
 import moment from "moment";
-import {getHoliday, addHoliday, updateHoliday, removeHoliday} from "../mockData/Holiday";
+import {getHoliday, updateHoliday, removeHoliday} from "../mockData/Holiday";
+import CreateHoliday from "./CreateHoliday";
 
 const {RangePicker} = DatePicker;
 
@@ -52,6 +53,7 @@ const Holiday = () => {
     const [data, setData] = useState(getHoliday());
     const [editingKey, setEditingKey] = useState('');
     const isEditing = record => record.key === editingKey;
+    const [drawerVisible, setDrawerVisible] = useState(false);
     const edit = record => {
         let a = {...record};
         a.date = [moment(a.date[0], 'YYYY-MM-DD'), moment(a.date[1], 'YYYY-MM-DD')];
@@ -84,17 +86,6 @@ const Holiday = () => {
         } catch (errInfo) {
             console.log('Validate Failed:', errInfo);
         }
-    };
-
-    const add = () => {
-        let newRow = {
-            name: 'new holiday',
-            date: [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
-            day: moment().format('dddd')
-        };
-        let newData = addHoliday(newRow);
-        setData(newData);
-        message.success("New holiday added")
     };
 
     const remove = index => {
@@ -147,9 +138,9 @@ const Holiday = () => {
                         <a style={{marginRight: 16}} disabled={editingKey !== ''} onClick={() => edit(record)}>
                             Edit
                         </a>
-                        <a disabled={editingKey !== ''} onClick={() => remove(record.key)}>
-                            Delete
-                        </a>
+                        <Popconfirm title="Sure to delete?" disabled={editingKey !== ''} onConfirm={() => remove(record.key)} >
+                            <a>Delete</a>
+                        </Popconfirm>
                     </div>
                 );
             },
@@ -170,18 +161,32 @@ const Holiday = () => {
             }),
         };
     });
-
+    const onCreate = () => {
+        setDrawerVisible(true)
+    };
+    const onClose = () => {
+        setDrawerVisible(false)
+    };
     return (
         <Form form={form} component={false}>
             <Button
                 type="primary"
-                onClick={add}
+                onClick={onCreate}
                 style={{
                     marginBottom: 16,
                 }}
             >
                 Add a row
             </Button>
+            <Drawer
+                title="Create a new leave request"
+                width={600}
+                onClose={onClose}
+                visible={drawerVisible}
+                bodyStyle={{paddingBottom: 80}}
+            >
+                <CreateHoliday form={form} setData={setData} setDrawerVisible={setDrawerVisible}/>
+            </Drawer>
             <Table
                 components={{
                     body: {

@@ -9,7 +9,6 @@ import {userContext} from "./UserContext";
 import constant from '../constant'
 import {addData, getDataByUser} from "../mockData/LeaveRequest";
 import {getHolidayDateArray, getNumberTakenDay} from '../mockData/Holiday'
-import moment from "moment";
 
 const {RangePicker} = DatePicker;
 const {TextArea} = Input;
@@ -35,7 +34,7 @@ const CreateRequest = (pros) => {
         const data = getDataByUser(user);
         form.resetFields();
         pros.setRequest(data);
-        pros.setDrawerVisible(false)
+        pros.setDrawerVisible(false);
         message.success('Successful create request');
     };
 
