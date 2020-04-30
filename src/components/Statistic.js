@@ -1,26 +1,31 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import 'antd/dist/antd.css';
-import { Table} from 'antd';
-import {getLeave, getLeaveByUser, getTotalLeave} from "../mockData/LeaveRequest";
+import { Table, DatePicker} from 'antd';
+import {getLeave, getLeaveByUser} from "../mockData/LeaveRequest";
 import {userContext} from "./UserContext";
 import constant from '../constant'
+import moment from "moment";
+import {getTotalLeaveByYear} from "../mockData/YearLeave";
 
 
 const Statistic = () => {
     const [user] = useContext(userContext);
+    const [year, setYear] = useState(moment().format("YYYY"));
     let data = [];
     if (user.role === constant.Role.ADMIN){
         data = getLeave();
     } else {
         data = getLeaveByUser(user.userName)
     }
-    // let data = getLeave();
-    console.log(data);
+
+    let total = getTotalLeaveByYear(year);
     let tableData = [];
     for (let userName of Object.keys(data)) {
+        let leaveUsed = data[userName][year] || 0;
         tableData.push({
             name: userName,
-            leaveLeft : data[userName]
+            leaveUsed : leaveUsed,
+            leaveLeft : total - leaveUsed
         })
     }
 
@@ -31,15 +36,24 @@ const Statistic = () => {
             width: '30%',
         },
         {
-            title: 'Total leave days',
+            title: 'Leave Used',
+            dataIndex: 'leaveUsed',
+            width: '30%',
+        },
+        {
+            title: 'Leave Left',
             dataIndex: 'leaveLeft',
             width: '30%',
         }
         ];
-    return <Table
-        columns={columns}
-        dataSource={tableData}
-    />
+    return <div>
+        <DatePicker onChange={(date, dateString) => setYear(dateString)} defaultValue={moment()} picker="year" />
+        <Table
+            columns={columns}
+            dataSource={tableData}
+        />
+        </div>
+
 };
 
 export default Statistic;

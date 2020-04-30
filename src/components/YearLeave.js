@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
-import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
 import './Holiday.css';
-import { Table, Input, DatePicker, Popconfirm, Form,Button } from 'antd';
-import moment from "moment";
-import {getHoliday, addHoliday, updateHoliday, removeHoliday} from "../mockData/Holiday";
-const {RangePicker} = DatePicker;
+import { Table, InputNumber, Popconfirm, Form,Button } from 'antd';
+import {addYearLeave, deleteYearLeave, editYearLeave, getYearLeave} from "../mockData/YearLeave";
 
 const originData = [];
 
@@ -27,17 +24,12 @@ const EditableCell = ({
                           children,
                           ...restProps
                       }) => {
-    let inputNode =  <input />;
-    let newchild = children
-    if (dataIndex === "date"){
-        console.log(children,'gg');
-        newchild = children[1][0] + '  -  ' + children[1][1]
-        inputNode = <RangePicker />
+    if (editing && dataIndex === "year") {
+        console.log(record)
     }
-    let checking = editing && dataIndex !== "day";
     return (
         <td {...restProps}>
-            {checking ? (
+            {editing ? (
                 <Form.Item
                     name={dataIndex}
                     style={{
@@ -50,49 +42,39 @@ const EditableCell = ({
                         },
                     ]}
                 >
-                    {inputNode}
+                    <InputNumber />
                 </Form.Item>
             ) : (
-                newchild
+                children
             )}
         </td>
     );
 };
 
-const Holiday = () => {
+const YearLeave = () => {
     const [form] = Form.useForm();
-    const [data, setData] = useState(getHoliday());
+    const [data, setData] = useState(getYearLeave());
     const [editingKey, setEditingKey] = useState('');
 
-    const isEditing = record => record.key === editingKey;
+    const isEditing = record => record.year === editingKey;
 
     const edit = record => {
-        console.log(record);
-        let a = {...record};
-        a.date = [moment(a.date[0], 'YYYY-MM-DD'), moment(a.date[1], 'YYYY-MM-DD')];
-        form.setFieldsValue(a);
-        setEditingKey(record.key);
+        form.setFieldsValue(record);
+        setEditingKey(record.year);
     };
 
     const cancel = () => {
         setEditingKey('');
     };
 
-    const save = async index => {
+    const save = async record => {
         try {
             const row = await form.validateFields();
-            console.log(row, "what");
-            let newday = row.date[0].format('dddd') + ' - '+row.date[1].format('dddd');
-            if (row.date[0].format('dddd') === row.date[1].format('dddd')){
-                newday = row.date[0].format('dddd')
-            }
-            let newdata = {
-                name: row.name,
-                date: [row.date[0].format('YYYY-MM-DD'),row.date[1].format('YYYY-MM-DD')],
-                day: newday,
-                key: index
+            let edit = {
+                year : row.year.toString(),
+                total : row.total,
             };
-            let data = updateHoliday(index, newdata);
+            let data = editYearLeave(record.year.toString(), row.year.toString(), edit);
             setData(data);
             setEditingKey('');
 
@@ -103,36 +85,29 @@ const Holiday = () => {
 
     const add = () => {
         let newRow = {
-            name : 'new holiday',
-            date : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
-            day : moment().format('dddd')
+            year : -1,
+            total : 15,
         };
-        let newData = addHoliday(newRow);
+        let newData = addYearLeave(newRow.year, newRow);
         setData(newData);
     };
 
-    const remove = index => {
-        let data = removeHoliday(index);
+    const remove = record => {
+        let data = deleteYearLeave(record.year);
         setData(data)
 
     };
 
     const columns = [
         {
-            title: 'name',
-            dataIndex: 'name',
+            title: 'Year',
+            dataIndex: 'year',
             width: '30%',
             editable: true,
         },
         {
-            title: 'date',
-            dataIndex: 'date',
-            width: '25%',
-            editable: true,
-        },
-        {
-            title: 'day',
-            dataIndex: 'day',
+            title: 'Total',
+            dataIndex: 'total',
             width: '25%',
             editable: true,
         },
@@ -146,7 +121,7 @@ const Holiday = () => {
                     <span>
             <a
                 href="javascript:;"
-                onClick={() => save(record.key)}
+                onClick={() => save(record)}
                 style={{
                     marginRight: 8,
                 }}
@@ -162,7 +137,7 @@ const Holiday = () => {
                         <a style={{ marginRight: 16 }} disabled={editingKey !== ''} onClick={() => edit(record)}>
                             Edit
                         </a>
-                        <a disabled={editingKey !== ''} onClick={() => remove(record.key)}>
+                        <a disabled={editingKey !== ''} onClick={() => remove(record)}>
                             delete
                         </a>
                     </div>
@@ -186,7 +161,8 @@ const Holiday = () => {
         };
     });
 
-    console.log(data,"te");
+    const preparedData = Object.keys(data).map( key => data[key]);
+
     return (
         <Form form={form} component={false}>
             <Button
@@ -206,7 +182,7 @@ const Holiday = () => {
                 }}
                 tableLayout={"fixed"}
                 bordered
-                dataSource={data}
+                dataSource={preparedData}
                 columns={mergedColumns}
                 rowClassName="editable-row"
                 pagination={{
@@ -218,4 +194,4 @@ const Holiday = () => {
     );
 };
 
-export default Holiday;
+export default YearLeave;

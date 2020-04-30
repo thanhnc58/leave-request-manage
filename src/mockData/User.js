@@ -14,11 +14,20 @@ const users = {
     }
 };
 
+const leave = {
+    "user": {},
+    "user2":{}
+};
+
 function authenticateUser(username, password) {
     return {
         exist : users[username]?.password === password,
         role: users[username]?.role
     }
+}
+
+export function initData() {
+    localStorage.setItem("Leave", JSON.stringify(leave));
 }
 
 

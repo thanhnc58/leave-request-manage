@@ -1,20 +1,6 @@
 import constant from '../constant'
+import moment from "moment";
 
-function removeRow(key) {
-    let data = getData();
-    let res = [];
-    for (let i =0; i < data.length; i++){
-        if (i === key){
-            continue
-        }
-        data[i].key = i;
-        res.push(data[i])
-    }
-    console.log(data, key);
-    console.log(res);
-    localStorage.setItem("request", JSON.stringify(res));
-    return res
-}
 
 export function getData() {
     let data = localStorage.getItem("request");
@@ -50,16 +36,19 @@ export function addData(row) {
 }
 
 export function updateStatus(index, action, role) {
+    let data = getData();
+    let prevStatus = data[index].status;
+
     let statusTransition = [
         [constant.RequestStatus.CREATED, constant.Role.ADMIN, constant.RequestAction.ACCEPT, constant.RequestStatus.APPROVED],
         [constant.RequestStatus.CREATED, constant.Role.ADMIN, constant.RequestAction.CANCEL, constant.RequestStatus.REJECTED],
         [constant.RequestStatus.CREATED, constant.Role.USER, constant.RequestAction.CANCEL, constant.RequestStatus.CANCELED],
-        [constant.RequestStatus.APPROVED, constant.Role.USER, constant.RequestAction.CANCEL, constant.RequestStatus.CANCELING],
+        [constant.RequestStatus.APPROVED, constant.Role.USER, constant.RequestAction.CANCEL, constant.RequestStatus.CANCELED],
         [constant.RequestStatus.CANCELING, constant.Role.ADMIN, constant.RequestAction.ACCEPT, constant.RequestStatus.CANCELED]
     ];
-
-    let data = getData();
-    let prevStatus = data[index].status;
+    if (moment().diff(moment(data[index].start)) > 0){
+        statusTransition[3] = [constant.RequestStatus.APPROVED, constant.Role.USER, constant.RequestAction.CANCEL, constant.RequestStatus.CANCELING]
+    }
     for (let item of statusTransition) {
         if (data[index].status === item[0] && role === item[1] && action === item[2]){
             data[index].status = item[3];
@@ -68,13 +57,14 @@ export function updateStatus(index, action, role) {
         }
     }
     let postStatus = data[index].status;
-    addLeave(data[index].name, data[index].takenDay, prevStatus, postStatus);
+    let year = moment(data[index].start).format('YYYY');
+    if (data[index].type === constant.RequestType.ANNUAL){
+        addLeave(data[index].name, data[index].takenDay, year, prevStatus, postStatus);
+    }
+
     return data;
 }
 
-export function getTotalLeave(year) {
-    return 15
-}
 
 export function getLeave() {
     let data = localStorage.getItem("Leave");
@@ -89,35 +79,23 @@ export function getLeaveByUser(userName) {
         [userName]: dataObj[userName]
     };
 }
-export function addLeave(username, leave, prevStatus, posStatus) {
+export function addLeave(username, leave , year, prevStatus, posStatus) {
 
     if (prevStatus === posStatus){
         return;
     }
-    console.log(username, leave, prevStatus, posStatus,"gg");
     if (prevStatus === constant.RequestStatus.CANCELING && posStatus === constant.RequestStatus.CANCELED){
-        console.log("gggg")
         leave = -leave;
     } else if (posStatus !== constant.RequestStatus.APPROVED){
-        console.log("gg3")
         return;
     }
-    console.log("gggg4")
 
     let data = localStorage.getItem("Leave");
     let dataObj = JSON.parse(data);
-    if (!dataObj) {
-        dataObj = {};
-    }
-    if (dataObj[username]) {
-        dataObj[username] += leave;
+    if (dataObj[username][year]) {
+        dataObj[username][year] += leave;
     } else {
-        dataObj[username] = leave;
+        dataObj[username][year] = leave;
     }
-    console.log(username, leave, prevStatus, posStatus, "testttt");
-    console.log(dataObj, username);
     localStorage.setItem("Leave", JSON.stringify(dataObj));
 }
-
-
-export default removeRow;

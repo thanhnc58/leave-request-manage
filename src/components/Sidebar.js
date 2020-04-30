@@ -4,11 +4,10 @@ import 'antd/dist/antd.css';
 import './Sidebar.css';
 import {Layout, Menu, Row, Col, Button} from 'antd';
 import {
-    MenuUnfoldOutlined,
-    MenuFoldOutlined,
+    AppstoreOutlined,
     TableOutlined,
     VideoCameraOutlined,
-    UploadOutlined,
+    StockOutlined,
     LogoutOutlined,
     CalendarOutlined,
 } from '@ant-design/icons';
@@ -50,6 +49,10 @@ const Sidebar = (pros) => {
         setSelected('4');
         history.push("/calendar");
     };
+    const yearLeave = () => {
+        setSelected('6');
+        history.push("/year-leave");
+    };
 
     const CreateRequestList = () => {
         if (user.role === constant.Role.USER) {
@@ -73,12 +76,16 @@ const Sidebar = (pros) => {
                 <span>Holiday</span>
             </Menu.Item>
             <Menu.Item key="3" onClick={statistic}>
-                <UploadOutlined/>
+                <StockOutlined />
                 <span>Statistic</span>
             </Menu.Item>
             <Menu.Item key="4" onClick={customCalendar}>
                 <CalendarOutlined />
                 <span>Calendar</span>
+            </Menu.Item>
+            <Menu.Item key="6" onClick={yearLeave}>
+                <AppstoreOutlined />
+                <span>Year Leave</span>
             </Menu.Item>
             <Menu.Item key="5" onClick={logout}>
                 <LogoutOutlined/>
@@ -94,7 +101,7 @@ const Sidebar = (pros) => {
                 <span>Request list</span>
             </Menu.Item>
             <Menu.Item key="3" onClick={statistic}>
-                <UploadOutlined/>
+                <StockOutlined />
                 <span>Statistic</span>
             </Menu.Item>
             <Menu.Item key="4" onClick={customCalendar}>

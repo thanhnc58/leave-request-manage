@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import { Form, Input, Button, Row, DatePicker, Tooltip, Switch, Select } from 'antd';
 import 'antd/dist/antd.css';
 import {
@@ -18,7 +18,6 @@ const CreateRequest = (pros) => {
     const [form] = Form.useForm();
 
     const onFinish = (values) => {
-        console.log( values.date[1].format('YYYY-MM-DD'));
 
         let start = parseInt(values.date[0].format("DDDD"));
         let end = parseInt(values.date[1].format("DDDD"));
@@ -33,8 +32,9 @@ const CreateRequest = (pros) => {
             status: constant.RequestStatus.CREATED,
             note: values.note,
             takenDay: takenDay,
-            type: values.type
+            type: values.requestType || constant.RequestType.ANNUAL
         };
+        console.log(requestObj, values);
         addData(requestObj);
         const data = getDataByUser(user);
         form.resetFields();
@@ -46,6 +46,17 @@ const CreateRequest = (pros) => {
         form.resetFields();
         pros.setDrawerVisible(false)
     };
+
+    const [dates, setDates] = useState([]);
+    const disabledDate = current => {
+        if (!dates || dates.length === 0) {
+            return false;
+        }
+        const tooLate = dates[0] && !current.isSame(dates[0], 'years');
+        const tooEarly = dates[1] && !dates[1].isSame(current, 'years');
+        return tooEarly || tooLate;
+    };
+
     const formItemLayout = {
         labelCol: {
             xs: {
@@ -73,8 +84,13 @@ const CreateRequest = (pros) => {
             layout="horizontal"
             onFinish={onFinish}
         >
-            <Form.Item label="Duration" name={"date"}>
-                <RangePicker />
+            <Form.Item label="Duration" name={"date"} rules={[{ required: true, message: 'Please input date!' }]}>
+                <RangePicker
+                    disabledDate={disabledDate}
+                    onCalendarChange={value => {
+                        setDates(value);
+                    }}
+                />
             </Form.Item>
             <Form.Item label="Note" name={"note"}>
                 <TextArea rows={6}/>
@@ -95,8 +111,8 @@ const CreateRequest = (pros) => {
                     <QuestionCircleOutlined style={{ margin: '0 8px' }}/>
                 </Tooltip>
             </Form.Item>
-            <Form.Item label="Request Type" name={"type"}>
-                <Select defaultValue={constant.RequestType.ANNUAL} style={{ width: 120 }} >
+            <Form.Item label="Request Type" name={"requestType"}>
+                <Select defaultValue={constant.RequestType.ANNUAL}>
                     <Option value={constant.RequestType.ANNUAL}>Annual Leave</Option>
                     <Option value={constant.RequestType.MEDICAL}>Medical Leave</Option>
                 </Select>

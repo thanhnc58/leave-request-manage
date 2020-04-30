@@ -1,8 +1,24 @@
-
 .site-description-item-profile-wrapper {
     color: rgba(0, 0, 0, 0.65);
+    font-size: 14px;
+    line-height: 1.5715;
+    margin-bottom: 7px;
 }
-.site-description-item-profile-p {
+
+
+p.site-description-item-profile-p {
+    color: rgba(0, 0, 0, 0.85);
+    font-size: 16px;
+    line-height: 1.5715;
+    display: block;
+    margin-bottom: 16px;
+    font-weight: bold;
+
+}
+
+.site-description-item-profile-p-label {
+    margin-right: 8px;
+    display: inline-block;
     color: rgba(0, 0, 0, 0.85);
 }
 [data-theme="dark"] .site-description-item-profile-p {

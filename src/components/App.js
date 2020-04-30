@@ -10,11 +10,12 @@ import NormalLoginForm from "./Authentication";
 import UserContextProvider from "./UserContext";
 import Layout from "./Layout";
 import Holiday from "./Holiday";
-import Demo from "./LeaveRequest";
+import LeaveRequest from "./LeaveRequest";
 import Sidebar from "./Sidebar";
 import CreateRequest from "./CreateRequest";
 import Statistic from "./Statistic";
 import CustomCalendar from "./CustomCalendar";
+import YearLeave from "./YearLeave";
 
 
 function App() {
@@ -29,10 +30,11 @@ function App() {
                         <Sidebar>
                             <Switch>
                                 <Route exact path="/home" component={Holiday}/>
-                                <Route exact path="/request-list" component={Demo}/>
+                                <Route exact path="/request-list" component={LeaveRequest}/>
                                 <Route exact path="/create-request" component={CreateRequest}/>
                                 <Route exact path="/statistic" component={Statistic}/>
                                 <Route exact path="/calendar" component={CustomCalendar}/>
+                                <Route exact path="/year-leave" component={YearLeave}/>
                             </Switch>
                         </Sidebar>
                         {/*<Switch>*/}

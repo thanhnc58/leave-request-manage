@@ -2,13 +2,14 @@ import React, {useContext, useState} from 'react';
 import 'antd/dist/antd.css';
 import {Table, Tag, Modal, Button, Row, Drawer, Form} from 'antd';
 import './LeaveRequest.css'
-import {getDataByUser, getData, updateStatus, getLeave, addLeave, getTotalLeave} from "../mockData/LeaveRequest";
+import {getDataByUser, getData, updateStatus, getLeave} from "../mockData/LeaveRequest";
 import {userContext} from "./UserContext";
 import constant from '../constant'
 import moment from "moment";
 import ExtraInfo from "./LeaveRequestDetail"
 import {PlusOutlined} from '@ant-design/icons';
 import CreateRequest from "./CreateRequest";
+import {getTotalLeaveByYear} from "../mockData/YearLeave";
 
 const ActionButton = (pros) => {
     const [user] = useContext(userContext);
@@ -59,7 +60,7 @@ const ActionButton = (pros) => {
     }
 };
 
-const Demo = () => {
+const LeaveRequest = () => {
     const [user] = useContext(userContext);
     let data = {};
     if (user.role === constant.Role.ADMIN) {
@@ -149,12 +150,21 @@ const Demo = () => {
         setDrawerVisible(true)
     };
 
+    const CreateNewRequest = () => {
+        if (user.role === constant.Role.ADMIN){
+            return null
+        }
+        return (
+            <Row>
+                <Button type="primary" onClick={onCreate} style={{marginBottom: 10}}>
+                    <PlusOutlined/> New Request
+                </Button>
+            </Row>
+        )
+    };
+
     return <div>
-        <Row>
-            <Button type="primary" onClick={onCreate} style={{marginBottom: 10}}>
-                <PlusOutlined/> New Request
-            </Button>
-        </Row>
+        <CreateNewRequest />
         <Drawer
             title="Create a new leave request"
             width={600}
@@ -170,8 +180,9 @@ const Demo = () => {
             tableLayout={"fixed"}
             rowClassName={(a, i) => {
                 let res = 'clickable ';
-                let curLeave = leave?.[a.name] || 0;
-                let leaveLeft = getTotalLeave() - curLeave;
+                const curYear = moment(a.start).format("YYYY");
+                let curLeave = leave[a.name]?.[curYear] || 0;
+                let leaveLeft = getTotalLeaveByYear(curYear) - curLeave;
                 if (leaveLeft < a.takenDay) {
                     return res + 'highlight'
                 }
@@ -201,4 +212,4 @@ const Demo = () => {
     </div>
 };
 
-export default Demo;
+export default LeaveRequest;

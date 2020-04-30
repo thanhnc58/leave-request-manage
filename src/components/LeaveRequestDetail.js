@@ -1,31 +1,23 @@
 import constant from "../constant";
-import {Badge, Col, Row} from "antd";
+import {Badge, Col, Row, Divider, Tooltip} from "antd";
 import "./LeaveRequestDetail.css"
 import React from "react";
-import {getTotalLeave} from "../mockData/LeaveRequest";
+import moment from "moment";
+import {
+    QuestionCircleOutlined,
+} from '@ant-design/icons';
+import {getTotalLeaveByYear} from "../mockData/YearLeave";
 
 
-const DescriptionItem = ({ title, content }) => (
-    <div
-        className="site-description-item-profile-wrapper"
-        style={{
-            fontSize: 14,
-            lineHeight: '22px',
-            marginBottom: 7,
-        }}
-    >
-        <p
-            className="site-description-item-profile-p"
-            style={{
-                marginRight: 8,
-                display: 'inline-block',
-            }}
-        >
-            {title}:
-        </p>
+const DescriptionItem = ({ title, content, tip , tipTitle }) => {
+    const tips = tip ? (<Tooltip title={tipTitle} style={{display:tip}}>
+            <QuestionCircleOutlined style={{ margin: '0 8px' }}/>
+        </Tooltip>) : null;
+    return <div className="site-description-item-profile-wrapper">
+        <p className="site-description-item-profile-p-label">{title}{tips}:</p>
         {content}
     </div>
-);
+};
 
 const ExtraInfo = pros => {
     console.log(pros.row);
@@ -46,9 +38,14 @@ const ExtraInfo = pros => {
             break;
     }
     const userLeave = pros.leave[pros.row.name];
-    let leaveLeft = getTotalLeave() - userLeave;
+    const curYear = moment(pros.row.start).format("YYYY");
+    let curLeave = userLeave?.[curYear] || 0;
+    let leaveLeft = getTotalLeaveByYear(moment(pros.row.start).format("YYYY")) - curLeave;
     leaveLeft = leaveLeft < 0? 0: leaveLeft;
     return <div>
+        <p className="site-description-item-profile-p">
+            Information
+        </p>
         <Row>
             <Col span={12}>
                 <DescriptionItem title="Name" content={pros.row.name} />
@@ -64,20 +61,10 @@ const ExtraInfo = pros => {
         </Row>
         <Row>
             <Col span={12}>
-                <DescriptionItem title="Take a half day at start date" content={pros.row.halfStart} />
-            </Col>
-        </Row>
-        <Row>
-            <Col span={12}>
-                <DescriptionItem title="Take a half day at end date" content={pros.row.halfEnd} />
-            </Col>
-        </Row>
-        <Row>
-            <Col span={12}>
-                <DescriptionItem title="Leave Left" content={leaveLeft + ' days'}/>
+                <DescriptionItem title="From" content={moment(pros.row.start).format('dddd')} />
             </Col>
             <Col span={12}>
-                <DescriptionItem title="Total leave" content={userLeave + ' days'} />
+                <DescriptionItem title="To" content={moment(pros.row.end).format('dddd')} />
             </Col>
         </Row>
         <Row>
@@ -87,7 +74,15 @@ const ExtraInfo = pros => {
         </Row>
         <Row>
             <Col span={12}>
-                <DescriptionItem title="Status" content={<Badge status={statusColor} text={pros.row.status.toLowerCase()} />}/>
+                <DescriptionItem title="Half start" content={pros.row.halfStart} tip={true} tipTitle={"Only take leave starting from the afternoon of the start date."}/>
+            </Col>
+            <Col span={12}>
+                <DescriptionItem title="Half end" content={pros.row.halfEnd} tip={true} tipTitle={"Start going back to work from the afternoon of the end date."}/>
+            </Col>
+        </Row>
+        <Row>
+            <Col span={12}>
+                <DescriptionItem title="Status" content={<Badge status={statusColor} text={pros.row.status.charAt(0) + pros.row.status.slice(1).toLowerCase()} />}/>
             </Col>
             <Col span={12}>
                 <DescriptionItem title="Type" content={pros.row.type} />
@@ -99,7 +94,18 @@ const ExtraInfo = pros => {
                 <DescriptionItem title="Note" content={pros.row.note} />
             </Col>
         </Row>
-
+        <Divider />
+        <p className="site-description-item-profile-p">
+            {moment(pros.row.start).format("YYYY")} status
+        </p>
+        <Row>
+            <Col span={12}>
+                <DescriptionItem title="Leave left" content={leaveLeft + ' days'}/>
+            </Col>
+            <Col span={12}>
+                <DescriptionItem title="Total leave" content={curLeave + ' days'} />
+            </Col>
+        </Row>
     </div>
 };
 
