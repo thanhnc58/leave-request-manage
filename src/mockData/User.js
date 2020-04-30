@@ -28,6 +28,9 @@ function authenticateUser(username, password) {
 
 export function initData() {
     localStorage.setItem("Leave", JSON.stringify(leave));
+    localStorage.setItem("yearLeave", JSON.stringify({}));
+    localStorage.setItem("holiday", JSON.stringify([]));
+    localStorage.setItem("request", JSON.stringify([]));
 }
 
 
