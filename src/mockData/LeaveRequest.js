@@ -1,11 +1,17 @@
 import constant from '../constant'
 import moment from "moment";
+import {getNumberTakenDay} from "./Holiday";
 
 
 export function getData() {
     let data = localStorage.getItem("request");
+    return JSON.parse(data)
+}
+export function getDataByKey(key) {
+    let data = localStorage.getItem("request");
     let dataObj = JSON.parse(data);
-    return dataObj
+    const index = dataObj.findIndex(d => d.key === key);
+    return dataObj[index]
 }
 
 export function getDataByUser(user) {
@@ -17,26 +23,25 @@ export function getDataByUser(user) {
     if (!dataObj){
         return []
     }
-    console.log(dataObj, 1, user);
-    let res = dataObj.filter((row) => row.name === user.userName);
-    console.log(res);
-    return res
+    return dataObj.filter((row) => row.name === user.userName)
 }
 
+// Create data with generate nearly unique index
 export function addData(row) {
     let data = getData();
     if (!data){
-        row.key = 0;
+        row.key = moment().unix() + Math.floor(Math.random() * 1000).toString();
         data = [row]
     } else {
-        row.key = data.length;
+        row.key = moment().unix() + Math.floor(Math.random() * 1000).toString();
         data.push(row);
     }
     localStorage.setItem("request", JSON.stringify(data));
 }
 
-export function updateStatus(index, action, role) {
+export function updateStatus(key, action, role) {
     let data = getData();
+    const index = data.findIndex(d => d.key === key);
     let prevStatus = data[index].status;
 
     let statusTransition = [
@@ -56,10 +61,14 @@ export function updateStatus(index, action, role) {
             break
         }
     }
-    let postStatus = data[index].status;
+    let posStatus = data[index].status;
     let year = moment(data[index].start).format('YYYY');
     if (data[index].type === constant.RequestType.ANNUAL){
-        addLeave(data[index].name, data[index].takenDay, year, prevStatus, postStatus);
+        let takenDay = data[index].takenDay;
+        if (prevStatus === constant.RequestStatus.CANCELING && posStatus === constant.RequestStatus.CANCELED){
+            takenDay = getNumberTakenDay(moment(data[index].start), moment(), false, false);
+        }
+        addLeave(data[index].name, takenDay, year, prevStatus, posStatus);
     }
 
     return data;
@@ -68,8 +77,7 @@ export function updateStatus(index, action, role) {
 
 export function getLeave() {
     let data = localStorage.getItem("Leave");
-    let dataObj = JSON.parse(data);
-    return dataObj;
+    return JSON.parse(data);
 }
 
 export function getLeaveByUser(userName) {
@@ -79,12 +87,13 @@ export function getLeaveByUser(userName) {
         [userName]: dataObj[userName]
     };
 }
-export function addLeave(username, leave , year, prevStatus, posStatus) {
 
+// update user leave used
+export function addLeave(username, leave , year, prevStatus, posStatus) {
     if (prevStatus === posStatus){
         return;
     }
-    if (prevStatus === constant.RequestStatus.CANCELING && posStatus === constant.RequestStatus.CANCELED){
+    if (prevStatus !== constant.RequestStatus.CREATED && posStatus === constant.RequestStatus.CANCELED){
         leave = -leave;
     } else if (posStatus !== constant.RequestStatus.APPROVED){
         return;

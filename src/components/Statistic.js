@@ -25,7 +25,7 @@ const Statistic = () => {
         tableData.push({
             name: userName,
             leaveUsed : leaveUsed,
-            leaveLeft : total - leaveUsed
+            leaveLeft : total - leaveUsed < 0 ? 0 : total -leaveUsed
         })
     }
 

@@ -5,7 +5,7 @@ export function editYearLeave(prev, year, record) {
     localStorage.setItem("yearLeave", JSON.stringify(yearLeave));
     return yearLeave
 }
-
+// add custom leave of year
 export function addYearLeave(year, record) {
     let yearLeave = getYearLeave();
     yearLeave[year] = record;
@@ -23,8 +23,7 @@ export function deleteYearLeave(year) {
 
 export function getYearLeave() {
     let data = localStorage.getItem("yearLeave");
-    let dataObj = JSON.parse(data);
-    return dataObj
+    return JSON.parse(data)
 }
 
 export function getTotalLeaveByYear(year) {

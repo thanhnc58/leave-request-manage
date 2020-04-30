@@ -1,10 +1,9 @@
 import React from 'react';
 import 'antd/dist/antd.css';
-import './Calendar.css';
-import { Calendar, Badge, Popover } from 'antd';
+import './CustomCalendar.css';
+import {Calendar, Badge, Popover} from 'antd';
 import {getDayDetail} from "../mockData/Holiday";
 import {UserOutlined} from '@ant-design/icons';
-
 
 function dateCellRender(value) {
     const listData = getDayDetail(value);
@@ -15,13 +14,13 @@ function dateCellRender(value) {
         <ul className="events">
             {holiday.map(item => (
                 <li>
-                    <Badge status={"success"} text={item} />
+                    <Badge status={"success"} text={item}/>
                 </li>
             ))}
 
             {matchRequest.map(item => (
                 <li>
-                    <UserOutlined style={{ marginRight: 5 }}/>
+                    <UserOutlined style={{marginRight: 5}}/>
                     {item}
                 </li>
             ))}
@@ -29,7 +28,7 @@ function dateCellRender(value) {
         </ul>
     );
     return (
-        <Popover content={content} >
+        <Popover content={content}>
             {content}
         </Popover>
     );

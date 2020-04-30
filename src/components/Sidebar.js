@@ -2,7 +2,7 @@ import React, {useContext, useState} from 'react';
 import {useHistory} from "react-router-dom";
 import 'antd/dist/antd.css';
 import './Sidebar.css';
-import {Layout, Menu, Row, Col, Button} from 'antd';
+import {Layout, Menu} from 'antd';
 import {
     AppstoreOutlined,
     TableOutlined,
@@ -15,12 +15,9 @@ import {userContext} from "./UserContext";
 import constant from '../constant'
 
 
-const {Header, Sider, Content} = Layout;
+const {Sider, Content} = Layout;
 const Sidebar = (pros) => {
-    const [sidebar, setSidebar] = useState({collapsed: false});
-    const toggle = () => {
-        setSidebar({collapsed: !sidebar.collapsed})
-    };
+    const [sidebar] = useState({collapsed: false});
     const [selected, setSelected] = useState('1');
     const [user, setUser] = useContext(userContext);
     const history = useHistory();
@@ -54,19 +51,8 @@ const Sidebar = (pros) => {
         history.push("/year-leave");
     };
 
-    const CreateRequestList = () => {
-        if (user.role === constant.Role.USER) {
-            return <Button type="primary" onClick={() => {
-                history.push("/create-request")
-            }}>
-                Create Request
-            </Button>
-        }
-        return null
-    };
-
     const AdminMenu = () => {
-        return <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']} selectedKeys={[selected]}>
+        return <Menu theme="dark" mode="inline" defaultSelectedKeys={['0']} selectedKeys={[selected]}>
             <Menu.Item key="1" onClick={requestList}>
                 <TableOutlined/>
                 <span>Request list</span>

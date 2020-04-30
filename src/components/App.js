@@ -6,7 +6,7 @@ import {
     Switch,
     Route,
 } from "react-router-dom";
-import NormalLoginForm from "./Authentication";
+import Authentication from "./Authentication";
 import UserContextProvider from "./UserContext";
 import Layout from "./Layout";
 import Holiday from "./Holiday";
@@ -24,8 +24,7 @@ function App() {
 
             <Router>
                 <Switch>
-                    <Route exact path="/" component={NormalLoginForm}/>
-
+                    <Route exact path="/" component={Authentication}/>
                     <Layout>
                         <Sidebar>
                             <Switch>
@@ -37,11 +36,7 @@ function App() {
                                 <Route exact path="/year-leave" component={YearLeave}/>
                             </Switch>
                         </Sidebar>
-                        {/*<Switch>*/}
-                        {/*    <Route exact path="/create-request" component={CreateRequest}/>*/}
-                        {/*</Switch>*/}
                     </Layout>
-
                     <Route path="*" component={() => "404 NOT FOUND"}/>
                 </Switch>
             </Router>

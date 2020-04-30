@@ -24,9 +24,6 @@ const EditableCell = ({
                           children,
                           ...restProps
                       }) => {
-    if (editing && dataIndex === "year") {
-        console.log(record)
-    }
     return (
         <td {...restProps}>
             {editing ? (
@@ -112,8 +109,8 @@ const YearLeave = () => {
             editable: true,
         },
         {
-            title: 'operation',
-            dataIndex: 'operation',
+            title: 'Action',
+            dataIndex: 'action',
             render: (_, record) => {
                 console.log(record);
                 const editable = isEditing(record);

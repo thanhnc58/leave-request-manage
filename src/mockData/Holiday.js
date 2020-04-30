@@ -1,5 +1,5 @@
-import moment from "moment";
-import {getData, getLeave} from "./LeaveRequest";
+import moment, {unix} from "moment";
+import {getData} from "./LeaveRequest";
 import constant from '../constant'
 
 
@@ -9,13 +9,14 @@ export function getHoliday() {
     return dataObj
 }
 
+// Create data with generate nearly unique index
 export function addHoliday(row) {
     let data = getHoliday();
     if (!data){
-        row.key = 0;
+        row.key = moment().format('x') + Math.floor(Math.random() * 1000).toString();
         data = [row]
     } else {
-        row.key = data.length;
+        row.key = moment().format('x') + Math.floor(Math.random() * 1000).toString();
         data.push(row);
     }
     localStorage.setItem("holiday", JSON.stringify(data));
@@ -24,7 +25,8 @@ export function addHoliday(row) {
 
 export function updateHoliday(key, row) {
     let data = getHoliday();
-    data[key] = row;
+    let index = data.findIndex(d => d.key === key);
+    data[index] = row;
     localStorage.setItem("holiday", JSON.stringify(data));
     return data
 }
@@ -32,25 +34,24 @@ export function updateHoliday(key, row) {
 export function removeHoliday(key) {
     let data = getHoliday();
     let res = [];
-    let count = 0;
     for (let i = 0; i < data.length; i++){
         if (data[i].key === key){
             continue
         }
-        data[i].key = count;
-        count++;
         res.push(data[i])
     }
-    console.log(data, key);
-    console.log(res);
     localStorage.setItem("holiday", JSON.stringify(res));
     return res
 }
 
-export function GetNumberTakenDay(startLeave, endLeave, halfStart, halfEnd) {
+// Calculate number of actual leave days in a time range based on holiday or weekend
+export function getNumberTakenDay(from, to, halfStart, halfEnd) {
     let data = getHoliday();
     let holidays = [];
     let takenDay = 0;
+    let startLeave = parseInt(from.format("DDDD"));
+    let endLeave = parseInt(to.format("DDDD"));
+
     for (let i = 0; i <= 366; i++){
         if (moment().dayOfYear(i).day() === 0 || moment().dayOfYear(i).day() === 6){
             holidays.push(true)
@@ -77,23 +78,23 @@ export function GetNumberTakenDay(startLeave, endLeave, halfStart, halfEnd) {
     if (halfEnd && !holidays[halfEnd]){
         takenDay -= 0.5
     }
-    console.log(holidays);
     return takenDay;
 }
 
+// Return holidays or people who leaved on a specific day
 export function getDayDetail(date) {
+    // We only care about compare date, so set a fixed time in case the date is equal
     date = date.set("hour", 10);
     let holidays = getHoliday();
-    console.log(holidays, "tt");
     let matchHoliday = [];
     for (let holiday of holidays){
         let [start, end] = holiday.date;
-        let [t1, t2] = [moment(start).set("hour", 5),moment(end).set("hour", 15) ];
 
+        // We only care about compare date, so set a fixed time in case the date is equal
+        let [t1, t2] = [moment(start).set("hour", 5),moment(end).set("hour", 15) ];
         if (t1 <= date && t2 >= date){
             matchHoliday.push(holiday.name)
         }
-        console.log(date, t1, t2, matchHoliday ,"ggg2");
     }
 
     let matchRequest = new Set();
@@ -106,6 +107,7 @@ export function getDayDetail(date) {
 
     let requests = getData();
     for (let request of requests) {
+        // We only care about compare date, so set a fixed time in case the date is equal
         let [t1, t2] = [moment(request.start).set("hour", 5),moment(request.end).set("hour", 15) ];
         if (t1 <= date &&  t2 >= date && (request.status === constant.RequestStatus.APPROVED || request.status === constant.RequestStatus.CANCELING)){
             matchRequest.add(request.name)

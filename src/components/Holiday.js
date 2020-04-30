@@ -1,22 +1,11 @@
-import React, { useState } from 'react';
-import ReactDOM from 'react-dom';
+import React, {useState} from 'react';
 import 'antd/dist/antd.css';
 import './Holiday.css';
-import { Table, Input, DatePicker, Popconfirm, Form,Button } from 'antd';
+import {Table, DatePicker, Popconfirm, Form, Button, message} from 'antd';
 import moment from "moment";
 import {getHoliday, addHoliday, updateHoliday, removeHoliday} from "../mockData/Holiday";
+
 const {RangePicker} = DatePicker;
-
-const originData = [];
-
-for (let i = 0; i < 15; i++) {
-    originData.push({
-        key: i.toString(),
-        name: `Edrward ${i}`,
-        date: ['2020-02-11', '2020-02-13'],
-        day: `London Park no. ${i}`,
-    });
-}
 
 const EditableCell = ({
                           editing,
@@ -27,12 +16,11 @@ const EditableCell = ({
                           children,
                           ...restProps
                       }) => {
-    let inputNode =  <input />;
+    let inputNode = <input/>;
     let newchild = children
-    if (dataIndex === "date"){
-        console.log(children,'gg');
+    if (dataIndex === "date") {
         newchild = children[1][0] + '  -  ' + children[1][1]
-        inputNode = <RangePicker />
+        inputNode = <RangePicker/>
     }
     let checking = editing && dataIndex !== "day";
     return (
@@ -63,11 +51,8 @@ const Holiday = () => {
     const [form] = Form.useForm();
     const [data, setData] = useState(getHoliday());
     const [editingKey, setEditingKey] = useState('');
-
     const isEditing = record => record.key === editingKey;
-
     const edit = record => {
-        console.log(record);
         let a = {...record};
         a.date = [moment(a.date[0], 'YYYY-MM-DD'), moment(a.date[1], 'YYYY-MM-DD')];
         form.setFieldsValue(a);
@@ -81,20 +66,20 @@ const Holiday = () => {
     const save = async index => {
         try {
             const row = await form.validateFields();
-            console.log(row, "what");
-            let newday = row.date[0].format('dddd') + ' - '+row.date[1].format('dddd');
-            if (row.date[0].format('dddd') === row.date[1].format('dddd')){
-                newday = row.date[0].format('dddd')
+            let newDay = row.date[0].format('dddd') + ' - ' + row.date[1].format('dddd');
+            if (row.date[0].format('dddd') === row.date[1].format('dddd')) {
+                newDay = row.date[0].format('dddd')
             }
-            let newdata = {
+            let newData = {
                 name: row.name,
-                date: [row.date[0].format('YYYY-MM-DD'),row.date[1].format('YYYY-MM-DD')],
-                day: newday,
+                date: [row.date[0].format('YYYY-MM-DD'), row.date[1].format('YYYY-MM-DD')],
+                day: newDay,
                 key: index
             };
-            let data = updateHoliday(index, newdata);
+            let data = updateHoliday(index, newData);
             setData(data);
             setEditingKey('');
+            message.success("Holiday updated");
 
         } catch (errInfo) {
             console.log('Validate Failed:', errInfo);
@@ -103,44 +88,44 @@ const Holiday = () => {
 
     const add = () => {
         let newRow = {
-            name : 'new holiday',
-            date : [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
-            day : moment().format('dddd')
+            name: 'new holiday',
+            date: [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+            day: moment().format('dddd')
         };
         let newData = addHoliday(newRow);
         setData(newData);
+        message.success("New holiday added")
     };
 
     const remove = index => {
         let data = removeHoliday(index);
         setData(data)
-
+        message.success("Holiday removed")
     };
 
     const columns = [
         {
-            title: 'name',
+            title: 'Name',
             dataIndex: 'name',
             width: '30%',
             editable: true,
         },
         {
-            title: 'date',
+            title: 'Date',
             dataIndex: 'date',
             width: '25%',
             editable: true,
         },
         {
-            title: 'day',
+            title: 'Day',
             dataIndex: 'day',
             width: '25%',
             editable: true,
         },
         {
-            title: 'operation',
-            dataIndex: 'operation',
+            title: 'Action',
+            dataIndex: 'action',
             render: (_, record) => {
-                console.log(record);
                 const editable = isEditing(record);
                 return editable ? (
                     <span>
@@ -159,7 +144,7 @@ const Holiday = () => {
           </span>
                 ) : (
                     <div>
-                        <a style={{ marginRight: 16 }} disabled={editingKey !== ''} onClick={() => edit(record)}>
+                        <a style={{marginRight: 16}} disabled={editingKey !== ''} onClick={() => edit(record)}>
                             Edit
                         </a>
                         <a disabled={editingKey !== ''} onClick={() => remove(record.key)}>
@@ -186,7 +171,6 @@ const Holiday = () => {
         };
     });
 
-    console.log(data,"te");
     return (
         <Form form={form} component={false}>
             <Button
@@ -206,7 +190,7 @@ const Holiday = () => {
                 }}
                 tableLayout={"fixed"}
                 bordered
-                dataSource={data}
+                dataSource={data.sort((a, b) => b.key - a.key)}
                 columns={mergedColumns}
                 rowClassName="editable-row"
                 pagination={{

@@ -5,10 +5,10 @@ import {Form, Input, Button, Row, Card} from 'antd';
 import {UserOutlined, LockOutlined} from '@ant-design/icons';
 import './authentication.css'
 import {userContext} from "./UserContext";
-import authenticateUser from "../mockData/User";
+import authenticateUser from "../mockData/FixedData";
 
 
-const NormalLoginForm = () => {
+const Authentication = () => {
     const [user, setUser] = useContext(userContext);
     const onFinish = values => {
         const {exist, role} = authenticateUser(values.username, values.password);
@@ -77,4 +77,4 @@ const NormalLoginForm = () => {
     );
 };
 
-export default NormalLoginForm;
+export default Authentication;

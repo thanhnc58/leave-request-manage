@@ -1,8 +1,8 @@
 import React, {useContext, useState} from 'react';
 import 'antd/dist/antd.css';
-import {Table, Tag, Modal, Button, Row, Drawer, Form} from 'antd';
+import {Table, Tag, Modal, Button, Row, Drawer, Form, message} from 'antd';
 import './LeaveRequest.css'
-import {getDataByUser, getData, updateStatus, getLeave} from "../mockData/LeaveRequest";
+import {getDataByUser, getData, updateStatus, getLeave, getDataByKey} from "../mockData/LeaveRequest";
 import {userContext} from "./UserContext";
 import constant from '../constant'
 import moment from "moment";
@@ -11,28 +11,27 @@ import {PlusOutlined} from '@ant-design/icons';
 import CreateRequest from "./CreateRequest";
 import {getTotalLeaveByYear} from "../mockData/YearLeave";
 
-const ActionButton = (pros) => {
+const ActionButton = (props) => {
     const [user] = useContext(userContext);
     const handleReject = (e) => {
         e.stopPropagation();
-        updateStatus(pros.rowKey, constant.RequestAction.CANCEL, user.role);
+        updateStatus(props.rowKey, constant.RequestAction.CANCEL, user.role);
         let data = getDataByUser(user);
-        pros.setRequest(data)
+        props.setRequest(data)
+        message.success("Request Rejected")
     };
     const handleAccept = (e) => {
         e.stopPropagation();
-        updateStatus(pros.rowKey, constant.RequestAction.ACCEPT, user.role);
+        updateStatus(props.rowKey, constant.RequestAction.ACCEPT, user.role);
         let data = getDataByUser(user);
-        pros.setLeave(getLeave());
-        pros.setRequest(data)
+        props.setLeave(getLeave());
+        props.setRequest(data);
+        message.success("Request Accepted")
     };
 
-    let data = getData();
-    if (!data || data.length === 0) {
-        return null
-    }
+    let data = getDataByKey(props.rowKey);
     if (user.role === constant.Role.ADMIN) {
-        if (data[pros.rowKey].status === constant.RequestStatus.CREATED) {
+        if (data.status === constant.RequestStatus.CREATED) {
             return <div>
                 <a style={{marginRight: 16}} onClick={handleAccept}>
                     Accept
@@ -41,7 +40,7 @@ const ActionButton = (pros) => {
                     Reject
                 </a>
             </div>
-        } else if (data[pros.rowKey].status === constant.RequestStatus.CANCELING) {
+        } else if (data.status === constant.RequestStatus.CANCELING) {
             return <div>
                 <a style={{marginRight: 16}} onClick={handleAccept}>
                     Accept
@@ -51,7 +50,7 @@ const ActionButton = (pros) => {
             return <div/>
         }
     } else {
-        if (data[pros.rowKey].status !== constant.RequestStatus.APPROVED) {
+        if (data.status !== constant.RequestStatus.APPROVED) {
             return <div/>
         }
         return <div>
@@ -67,7 +66,7 @@ const LeaveRequest = () => {
     let data = {};
     if (user.role === constant.Role.ADMIN) {
         data = getData()
-    } else {
+    } else if (user.role === constant.Role.USER) {
         data = getDataByUser(user);
     }
     const [request, setRequest] = useState(data);
@@ -164,7 +163,6 @@ const LeaveRequest = () => {
             </Row>
         )
     };
-
     return <div>
         <CreateNewRequest />
         <Drawer
@@ -178,7 +176,7 @@ const LeaveRequest = () => {
         </Drawer>
         <Table
             columns={columns}
-            dataSource={request}
+            dataSource={request.sort((a,b) => b.key - a.key)}
             tableLayout={"fixed"}
             rowClassName={(a, i) => {
                 let res = 'clickable ';
