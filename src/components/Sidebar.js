@@ -123,17 +123,6 @@ const Sidebar = (pros) => {
                 {ConMenu}
             </Sider>
             <Layout className="site-layout">
-                <Header className="site-layout-background" style={{padding: 0}}>
-                    <Row>
-                        {React.createElement(sidebar.collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
-                            className: 'trigger',
-                            onClick: toggle,
-                        })}
-                        <Col span={2} offset={20} style={{textAlign: "right"}}>
-                            <CreateRequestList/>
-                        </Col>
-                    </Row>
-                </Header>
                 <Content
                     className="site-layout-background"
                     style={{

@@ -10,3 +10,7 @@
     font-weight: bold;
     color: #ff0020;
 }
+
+.clickable {
+    cursor: pointer;
+}

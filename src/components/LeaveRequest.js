@@ -1,12 +1,14 @@
 import React, {useContext, useState} from 'react';
 import 'antd/dist/antd.css';
-import { Table, Tag } from 'antd';
+import {Table, Tag, Modal, Button, Row, Drawer, Form} from 'antd';
 import './LeaveRequest.css'
 import {getDataByUser, getData, updateStatus, getLeave, addLeave, getTotalLeave} from "../mockData/LeaveRequest";
 import {userContext} from "./UserContext";
 import constant from '../constant'
 import moment from "moment";
-
+import ExtraInfo from "./LeaveRequestDetail"
+import {PlusOutlined} from '@ant-design/icons';
+import CreateRequest from "./CreateRequest";
 
 const ActionButton = (pros) => {
     const [user] = useContext(userContext);
@@ -27,28 +29,27 @@ const ActionButton = (pros) => {
         return null
     }
     if (user.role === constant.Role.ADMIN) {
-        if (data[pros.rowKey].status === constant.RequestStatus.CREATED){
+        if (data[pros.rowKey].status === constant.RequestStatus.CREATED) {
             return <div>
-                <a style={{ marginRight: 16 }} onClick={handleAccept}>
+                <a style={{marginRight: 16}} onClick={handleAccept}>
                     Accept
                 </a>
                 <a onClick={handleReject}>
                     Reject
                 </a>
             </div>
-        } else if (data[pros.rowKey].status === constant.RequestStatus.CANCELING){
+        } else if (data[pros.rowKey].status === constant.RequestStatus.CANCELING) {
             return <div>
-                <a style={{ marginRight: 16 }} onClick={handleAccept}>
+                <a style={{marginRight: 16}} onClick={handleAccept}>
                     Accept
                 </a>
             </div>
         } else {
-            return <div />
+            return <div/>
         }
     } else {
-        console.log(data, pros.rowKey);
-        if (data[pros.rowKey].status !== constant.RequestStatus.APPROVED){
-            return <div />
+        if (data[pros.rowKey].status !== constant.RequestStatus.APPROVED) {
+            return <div/>
         }
         return <div>
             <a onClick={handleReject}>
@@ -65,13 +66,16 @@ const Demo = () => {
         data = getData()
     } else {
         data = getDataByUser(user);
-        console.log(data);
     }
     const [request, setRequest] = useState(data);
     const [leave, setLeave] = useState(getLeave());
+    const [modalVisible, setModalVisible] = useState(false);
+    const [drawerVisible, setDrawerVisible] = useState(false);
+    const [modalData, setModalData] = useState({});
+    const [form] = Form.useForm();
 
     const columns = [
-        { title: 'Name', dataIndex: 'name', key: 'name' },
+        {title: 'Name', dataIndex: 'name', key: 'name'},
         {
             title: 'Start date',
             dataIndex: 'start',
@@ -86,8 +90,8 @@ const Demo = () => {
             sorter: (a, b) => moment(a.end) - moment(b.end),
             sortDirections: ['descend', 'ascend'],
         },
-        { title: 'Take a half at start date', dataIndex: 'halfStart', key: 'halfStart', textWrap: 'word-break' , width: 120},
-        { title: 'Take a half day at end date', dataIndex: 'halfEnd', key: 'halfEnd', textWrap: 'word-break' , width: 130 },
+        {title: 'Take a half day at start date', dataIndex: 'halfStart', key: 'halfStart', textWrap: 'word-break'},
+        {title: 'Take a half day at end date', dataIndex: 'halfEnd', key: 'halfEnd', textWrap: 'word-break'},
         {
             title: 'status',
             dataIndex: 'status',
@@ -121,19 +125,7 @@ const Demo = () => {
             }
             ,
         },
-        { title: 'Taken days', dataIndex: 'takenDay', key: 'takenDay' },
-        {
-            title: 'Leave Left',
-            dataIndex: 'name',
-            render: (name) => {
-                let curLeave = leave?.[name] || 0;
-                let leaveLeft = getTotalLeave() - curLeave;
-                leaveLeft = leaveLeft < 0 ? 0 : leaveLeft;
-                return <div>
-                    {leaveLeft}
-                </div>
-            },
-        },
+        {title: 'Taken days', dataIndex: 'takenDay', key: 'takenDay'},
         {
             title: 'Action',
             dataIndex: 'key',
@@ -146,22 +138,67 @@ const Demo = () => {
         },
     ];
 
-    return <Table
-        columns={columns}
-        expandable={{
-            expandedRowRender: record => <p style={{ margin: 0 }}>{record.note}</p>,
-            rowExpandable: record => record.name !== 'Not Expandable',
-        }}
-        dataSource={request}
-        tableLayout={"fixed"}
-        rowClassName={(a,i) => {
-            let curLeave = leave?.[a.name] || 0;
-            let leaveLeft = getTotalLeave() - curLeave;
-            if (leaveLeft < a.takenDay) {
-                return 'highlight'
-            }
-        }}
-    />
+    const handleOk = () => {
+        setModalVisible(false)
+    };
+
+    const onClose = () => {
+        setDrawerVisible(false)
+    };
+    const onCreate = () => {
+        setDrawerVisible(true)
+    };
+
+    return <div>
+        <Row>
+            <Button type="primary" onClick={onCreate} style={{marginBottom: 10}}>
+                <PlusOutlined/> New Request
+            </Button>
+        </Row>
+        <Drawer
+            title="Create a new leave request"
+            width={600}
+            onClose={onClose}
+            visible={drawerVisible}
+            bodyStyle={{paddingBottom: 80}}
+        >
+            <CreateRequest form={form} setRequest={setRequest} setDrawerVisible={setDrawerVisible}/>
+        </Drawer>
+        <Table
+            columns={columns}
+            dataSource={request}
+            tableLayout={"fixed"}
+            rowClassName={(a, i) => {
+                let res = 'clickable ';
+                let curLeave = leave?.[a.name] || 0;
+                let leaveLeft = getTotalLeave() - curLeave;
+                if (leaveLeft < a.takenDay) {
+                    return res + 'highlight'
+                }
+                return res
+            }}
+            onRow={(r) => ({
+                onClick: () => {
+                    setModalVisible(true);
+                    setModalData(r)
+                },
+            })}
+        />
+        <Modal
+            title="Leave Request"
+            visible={modalVisible}
+            onOk={handleOk}
+            onCancel={handleOk}
+            width={700}
+            footer={[
+                <Button type="primary" onClick={handleOk}>
+                    Ok
+                </Button>,
+            ]}
+        >
+            <ExtraInfo row={modalData} leave={leave}/>
+        </Modal>
+    </div>
 };
 
 export default Demo;

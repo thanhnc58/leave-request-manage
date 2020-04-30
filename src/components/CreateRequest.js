@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import { Form, Input, Button, Row, DatePicker, Tooltip, Switch } from 'antd';
+import { Form, Input, Button, Row, DatePicker, Tooltip, Switch, Select } from 'antd';
 import 'antd/dist/antd.css';
 import {
     QuestionCircleOutlined,
@@ -7,15 +7,15 @@ import {
 import './CreateRequest.css'
 import {userContext} from "./UserContext";
 import constant from '../constant'
-import {addData} from "../mockData/LeaveRequest";
-import {useHistory} from "react-router-dom";
+import {addData, getDataByUser} from "../mockData/LeaveRequest";
 import {GetNumberTakenDay} from '../mockData/Holiday'
 const {RangePicker} = DatePicker;
 const { TextArea } = Input;
+const { Option } = Select;
 
-const CreateRequest = () => {
+const CreateRequest = (pros) => {
     const [user] = useContext(userContext);
-    const history = useHistory();
+    const [form] = Form.useForm();
 
     const onFinish = (values) => {
         console.log( values.date[1].format('YYYY-MM-DD'));
@@ -32,10 +32,19 @@ const CreateRequest = () => {
             halfEnd: values.halfEnd ? "Yes":"No",
             status: constant.RequestStatus.CREATED,
             note: values.note,
-            takenDay: takenDay
+            takenDay: takenDay,
+            type: values.type
         };
         addData(requestObj);
-        history.push("/request-list");
+        const data = getDataByUser(user);
+        form.resetFields();
+        pros.setRequest(data);
+        pros.setDrawerVisible(false)
+    };
+
+    const onCancel = () => {
+        form.resetFields();
+        pros.setDrawerVisible(false)
     };
     const formItemLayout = {
         labelCol: {
@@ -55,9 +64,10 @@ const CreateRequest = () => {
             },
         },
     };
-    return <Row justify={"center"}>
+    return <Row >
 
         <Form
+            form={form}
             size={"middle"}
             {...formItemLayout}
             layout="horizontal"
@@ -67,9 +77,9 @@ const CreateRequest = () => {
                 <RangePicker />
             </Form.Item>
             <Form.Item label="Note" name={"note"}>
-                <TextArea />
+                <TextArea rows={6}/>
             </Form.Item>
-            <Form.Item label="Half day of beginning leave" >
+            <Form.Item label="Half Start" >
                 <Form.Item noStyle name={"halfStart"}>
                     <Switch />
                 </Form.Item>
@@ -77,7 +87,7 @@ const CreateRequest = () => {
                     <QuestionCircleOutlined style={{ margin: '0 8px' }}/>
                 </Tooltip>
             </Form.Item>
-            <Form.Item label="Half day of end leave" >
+            <Form.Item label="Half End" >
                 <Form.Item  noStyle name={"halfEnd"}>
                     <Switch />
                 </Form.Item>
@@ -85,12 +95,18 @@ const CreateRequest = () => {
                     <QuestionCircleOutlined style={{ margin: '0 8px' }}/>
                 </Tooltip>
             </Form.Item>
-            <Form.Item wrapperCol ={{ offset: 8, span: 16 }}>
+            <Form.Item label="Request Type" name={"type"}>
+                <Select defaultValue={constant.RequestType.ANNUAL} style={{ width: 120 }} >
+                    <Option value={constant.RequestType.ANNUAL}>Annual Leave</Option>
+                    <Option value={constant.RequestType.MEDICAL}>Medical Leave</Option>
+                </Select>
+            </Form.Item>
+
+            <Form.Item wrapperCol ={{ offset: 8, span: 16 }} style={{marginTop:50}}>
                 <Button type="primary" htmlType="submit">
                     Submit
                 </Button>
-
-                <Button htmlType="button" onClick={() => {history.goBack()}}>
+                <Button htmlType="button" onClick={onCancel}>
                     cancel
                 </Button>
             </Form.Item>

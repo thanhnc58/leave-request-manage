@@ -10,3 +10,14 @@
 .login-form-button {
     width: 100%;
 }
+
+.site-card-border-less-wrapper {
+    background: #ececec;
+    padding-top: 100px;
+    padding-bottom: 430px;
+
+    /*margin: 100px;*/
+}
+[data-theme="dark"] .site-card-border-less-wrapper {
+    background: #303030;
+}

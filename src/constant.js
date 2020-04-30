@@ -16,3 +16,8 @@ exports.RequestAction = {
     CANCEL: 0,
     ACCEPT : 1
 };
+
+exports.RequestType = {
+    ANNUAL: "Annual",
+    MEDICAL: "Medical"
+};
