@@ -13,12 +13,14 @@ import {getTotalLeaveByYear} from "../mockData/YearLeave";
 
 const ActionButton = (pros) => {
     const [user] = useContext(userContext);
-    const handleReject = () => {
+    const handleReject = (e) => {
+        e.stopPropagation();
         updateStatus(pros.rowKey, constant.RequestAction.CANCEL, user.role);
         let data = getDataByUser(user);
         pros.setRequest(data)
     };
-    const handleAccept = () => {
+    const handleAccept = (e) => {
+        e.stopPropagation();
         updateStatus(pros.rowKey, constant.RequestAction.ACCEPT, user.role);
         let data = getDataByUser(user);
         pros.setLeave(getLeave());
@@ -183,7 +185,7 @@ const LeaveRequest = () => {
                 const curYear = moment(a.start).format("YYYY");
                 let curLeave = leave[a.name]?.[curYear] || 0;
                 let leaveLeft = getTotalLeaveByYear(curYear) - curLeave;
-                if (leaveLeft < a.takenDay) {
+                if (leaveLeft < a.takenDay && a.status === constant.RequestStatus.CREATED) {
                     return res + 'highlight'
                 }
                 return res

@@ -5,7 +5,7 @@ import App from './components/App';
 import * as serviceWorker from './serviceWorker';
 import {initData} from "./mockData/User";
 
-// initData();
+initData();
 
 ReactDOM.render(
   <React.StrictMode>

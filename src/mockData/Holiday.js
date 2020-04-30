@@ -96,11 +96,11 @@ export function getDayDetail(date) {
         console.log(date, t1, t2, matchHoliday ,"ggg2");
     }
 
-    let matchRequest = [];
-    if (date.day() === 0 || date.day() === 6){
+    let matchRequest = new Set();
+    if (date.day() === 0 || date.day() === 6 || matchHoliday.length > 0){
         return {
             matchHoliday,
-            matchRequest
+            matchRequest : []
         }
     }
 
@@ -108,12 +108,11 @@ export function getDayDetail(date) {
     for (let request of requests) {
         let [t1, t2] = [moment(request.start).set("hour", 5),moment(request.end).set("hour", 15) ];
         if (t1 <= date &&  t2 >= date && (request.status === constant.RequestStatus.APPROVED || request.status === constant.RequestStatus.CANCELING)){
-            matchRequest.push(request.name)
+            matchRequest.add(request.name)
         }
     }
-
     return {
         matchHoliday,
-        matchRequest
+        matchRequest: [...matchRequest]
     }
 }
