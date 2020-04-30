@@ -28,7 +28,7 @@ function App() {
                     <Layout>
                         <Sidebar>
                             <Switch>
-                                <Route exact path="/home" component={Holiday}/>
+                                <Route exact path="/holiday" component={Holiday}/>
                                 <Route exact path="/request-list" component={LeaveRequest}/>
                                 <Route exact path="/create-request" component={CreateRequest}/>
                                 <Route exact path="/statistic" component={Statistic}/>

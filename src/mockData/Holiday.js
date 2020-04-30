@@ -44,43 +44,8 @@ export function removeHoliday(key) {
     return res
 }
 
-// Calculate number of actual leave days in a time range based on holiday or weekend
-export function getNumberTakenDay(from, to, halfStart, halfEnd) {
-    let data = getHoliday();
-    let holidays = [];
-    let takenDay = 0;
-    let startLeave = parseInt(from.format("DDDD"));
-    let endLeave = parseInt(to.format("DDDD"));
-
-    for (let i = 0; i <= 366; i++){
-        if (moment().dayOfYear(i).day() === 0 || moment().dayOfYear(i).day() === 6){
-            holidays.push(true)
-        } else {
-            holidays.push(false);
-        }
-    }
-    for (let days of data){
-        let [start, end] = days.date;
-        let x = parseInt(moment(start).format("DDDD"));
-        let y = parseInt(moment(end).format("DDDD"));
-        for (let j = x ; j <= y; j++){
-            holidays[j] = true
-        }
-    }
-    for (let i = startLeave ; i <= endLeave; i++){
-        if (!holidays[i]){
-            takenDay++
-        }
-    }
-    if (halfStart && !holidays[startLeave]){
-        takenDay -= 0.5
-    }
-    if (halfEnd && !holidays[halfEnd]){
-        takenDay -= 0.5
-    }
-    return takenDay;
-}
-
+// Get an array has length = 367 (include day 0) represent for day of year
+// if holidays[i] = true, the day i is holiday or weekend
 export function getHolidayDateArray() {
     let data = getHoliday();
     let holidays = [];
@@ -102,6 +67,28 @@ export function getHolidayDateArray() {
     }
     return holidays
 }
+
+// Calculate number of actual leave days in a time range based on holiday or weekend
+export function getNumberTakenDay(from, to, halfStart, halfEnd) {
+    let holidays = getHolidayDateArray();
+    let takenDay = 0;
+    let startLeave = parseInt(from.format("DDDD"));
+    let endLeave = parseInt(to.format("DDDD"));
+
+    for (let i = startLeave ; i <= endLeave; i++){
+        if (!holidays[i]){
+            takenDay++
+        }
+    }
+    if (halfStart && !holidays[startLeave]){
+        takenDay -= 0.5
+    }
+    if (halfEnd && !holidays[halfEnd]){
+        takenDay -= 0.5
+    }
+    return takenDay;
+}
+
 
 // Return holidays or people who leaved on a specific day
 export function getDayDetail(date) {
