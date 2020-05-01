@@ -1,3 +1,7 @@
+/*
+Create fixed user data
+ */
+
 import constant from '../constant'
 
 const users = {

@@ -1,3 +1,7 @@
+/*
+A context hold user info
+ */
+
 import React , {useContext} from 'react';
 import {Redirect} from "react-router-dom";
 import {userContext} from "./UserContext";

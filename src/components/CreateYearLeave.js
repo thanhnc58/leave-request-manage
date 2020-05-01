@@ -1,3 +1,7 @@
+/*
+Create a Year leave form, year and number of annual leave is required
+ */
+
 import React from 'react';
 import {Form, InputNumber, Button, Row, message} from 'antd';
 import 'antd/dist/antd.css';

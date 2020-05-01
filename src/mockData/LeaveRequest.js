@@ -1,3 +1,8 @@
+/*
+- A fake backend where handle, CRUD of leave request
+- All data will be saved on localstorage
+ */
+
 import constant from '../constant'
 import moment from "moment";
 import {getNumberTakenDay} from "./Holiday";
@@ -26,7 +31,7 @@ export function getDataByUser(user) {
     return dataObj.filter((row) => row.name === user.userName)
 }
 
-// Create data with generate nearly unique index
+// Create data with generate nearly unique index (current time + a random number)
 export function addData(row) {
     let data = getData();
     if (!data){
@@ -54,6 +59,7 @@ export function updateStatus(key, action, role) {
     if (moment().startOf('day').diff(moment(data[index].start).startOf('day')) > 0){
         statusTransition[3] = [constant.RequestStatus.APPROVED, constant.Role.USER, constant.RequestAction.CANCEL, constant.RequestStatus.CANCELING]
     }
+    // update request status if satisfy condition of status transition
     for (let item of statusTransition) {
         if (data[index].status === item[0] && role === item[1] && action === item[2]){
             data[index].status = item[3];
@@ -61,10 +67,13 @@ export function updateStatus(key, action, role) {
             break
         }
     }
+
+    //if request is annual leave type, update number of leave left
     let posStatus = data[index].status;
     let year = moment(data[index].start).format('YYYY');
     if (data[index].type === constant.RequestType.ANNUAL){
         let takenDay = data[index].takenDay;
+        // If request status is canceling -> canceled, recalculate actual taken day, start from start of leave and current time
         if (prevStatus === constant.RequestStatus.CANCELING && posStatus === constant.RequestStatus.CANCELED){
             takenDay = getNumberTakenDay(moment(data[index].start), moment(), false, false);
         }

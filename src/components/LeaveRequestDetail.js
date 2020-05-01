@@ -1,3 +1,7 @@
+/*
+Show a request detail, and leave left status in year user have been requested
+ */
+
 import constant from "../constant";
 import {Badge, Col, Row, Divider, Tooltip} from "antd";
 import "./LeaveRequestDetail.css"

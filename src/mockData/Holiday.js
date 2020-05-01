@@ -1,3 +1,5 @@
+
+
 import moment, {unix} from "moment";
 import {getData} from "./LeaveRequest";
 import constant from '../constant'
@@ -68,7 +70,7 @@ export function getHolidayDateArray() {
     return holidays
 }
 
-// Calculate number of actual leave days in a time range based on holiday or weekend
+// Calculate number of actual leave days in a time range except holiday or weekend
 export function getNumberTakenDay(from, to, halfStart, halfEnd) {
     let holidays = getHolidayDateArray();
     let takenDay = 0;

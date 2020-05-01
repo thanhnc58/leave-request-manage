@@ -1,3 +1,8 @@
+/*
+A calendar where you can show up public holidays and a list of people who are off on a
+day.
+ */
+
 import React from 'react';
 import 'antd/dist/antd.css';
 import './CustomCalendar.css';

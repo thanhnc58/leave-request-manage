@@ -1,3 +1,8 @@
+/*
+- Only allow for admin user
+- Show a list of editable Holiday of a year, Admin also can delete and create new Holiday
+ */
+
 import React, {useState} from 'react';
 import 'antd/dist/antd.css';
 import './Holiday.css';

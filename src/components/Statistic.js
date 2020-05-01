@@ -1,3 +1,8 @@
+/*
+- View number leave left and leave used of user by year
+- Admin can view statistic of all user
+ */
+
 import React, {useContext, useState} from 'react';
 import 'antd/dist/antd.css';
 import { Table, DatePicker} from 'antd';

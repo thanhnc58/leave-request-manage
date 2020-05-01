@@ -1,3 +1,7 @@
+/*
+Create a leave request form, start time and end time is require
+ */
+
 import React, {useContext, useState} from 'react';
 import {Form, Input, Button, Row, DatePicker, Tooltip, Switch, Select, message} from 'antd';
 import 'antd/dist/antd.css';

@@ -1,3 +1,8 @@
+/*
+- Show a list of year and number of annual leave of that year
+- A default annual leave for all year is 15 days
+ */
+
 import React, { useState } from 'react';
 import 'antd/dist/antd.css';
 import './Holiday.css';

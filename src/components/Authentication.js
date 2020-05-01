@@ -1,3 +1,8 @@
+/*
+Handle simple authentication if user name and password is correct
+redirect to request list page
+*/
+
 import React, {useContext} from 'react';
 import { Redirect} from "react-router-dom";
 import 'antd/dist/antd.css';

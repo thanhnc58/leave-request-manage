@@ -1,3 +1,7 @@
+/*
+Create Holiday form, name and range of holiday is required
+*/
+
 import React from 'react';
 import {Form, Input, Button, Row, DatePicker, message} from 'antd';
 import 'antd/dist/antd.css';

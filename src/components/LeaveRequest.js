@@ -1,3 +1,14 @@
+/*
+A leave request page
+- Admin can view the requests of all people, admin can accept or reject a request
+- Admin/user can view request detail by click on a request
+- After accept/reject a request, request status is updated, number of leave leave is also updated
+    if there any request in created status and has taken day > leave left, it will be highlight
+    if request is not annual leave, leave left will not be counted
+- User can create a new request
+- Can sort, filter request by start, end date and status
+ */
+
 import React, {useContext, useState} from 'react';
 import 'antd/dist/antd.css';
 import {Table, Tag, Modal, Button, Row, Drawer, Form, message} from 'antd';
@@ -11,6 +22,9 @@ import {PlusOutlined} from '@ant-design/icons';
 import CreateRequest from "./CreateRequest";
 import {getTotalLeaveByYear} from "../mockData/YearLeave";
 
+// Component render action button for each request by user role and request status
+// example: return accept and reject button when user is admin and request status is Created
+// ...
 const ActionButton = (props) => {
     const [user] = useContext(userContext);
     const handleReject = (e) => {

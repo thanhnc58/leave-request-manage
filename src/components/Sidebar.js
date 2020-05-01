@@ -1,3 +1,7 @@
+/*
+Render Side bar based on user role
+ */
+
 import React, {useContext, useState} from 'react';
 import {useHistory, useLocation} from "react-router-dom";
 import 'antd/dist/antd.css';
