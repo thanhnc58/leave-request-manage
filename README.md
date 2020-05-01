@@ -21,12 +21,14 @@ There are 2 different role: `Admin`, `User`:
 - Create/cancel a leave/medical request,
 - View their list of request on leave request tab, and view detail by clicking on a request
 - View a statistic have leave left and leave used by year
-- view a calender that show holiday and people who leave on that day
+- View a calender that show holiday and people who leave on that day
 
 ##### Admin:
 
 - Admin have all user feature except create request
-- Accept or reject a request
+- Accept or reject a request 
+  - __Caution!__ when admin accept a __Canceling__ request, number of taken day will count from 
+  start leave to current day
 - Create/edit a Holiday
 - Create/edit number of annual leave of year
 
