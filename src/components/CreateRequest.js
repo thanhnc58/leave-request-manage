@@ -85,7 +85,7 @@ const CreateRequest = (pros) => {
             layout="horizontal"
             onFinish={onFinish}
         >
-            <Form.Item label="Duration" name={"date"} rules={[{required: true, message: 'Please input date!'}]}>
+            <Form.Item label="Duration" name={"date"} rules={[{required: true, message: 'Please input duration!'}]}>
                 <RangePicker
                     disabledDate={disabledDate}
                     onCalendarChange={value => {

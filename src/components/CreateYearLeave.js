@@ -20,7 +20,7 @@ const CreateYearLeave = (props) => {
         props.setData(newData);
         form.resetFields();
         props.setDrawerVisible(false);
-        message.success("New holiday added")
+        message.success("New year leave added")
     };
 
     const onCancel = () => {
@@ -55,10 +55,10 @@ const CreateYearLeave = (props) => {
             layout="horizontal"
             onFinish={onFinish}
         >
-            <Form.Item label="Year" name={"year"} rules={[{required: true, message: 'Please input name!'}]}>
+            <Form.Item label="Year" name={"year"} rules={[{required: true, message: 'Please input Year!'}]}>
                 <InputNumber width={2000}/>
             </Form.Item>
-            <Form.Item label="Total" name={"total"} rules={[{required: true, message: 'Please input date!'}]}>
+            <Form.Item label="Total" name={"total"} rules={[{required: true, message: 'Please input Total!'}]}>
                 <InputNumber
                 />
             </Form.Item>
