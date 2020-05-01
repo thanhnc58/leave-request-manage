@@ -47,15 +47,12 @@ const CreateRequest = (pros) => {
     let holidays = getHolidayDateArray();
     const disabledDate = current => {
         let index = parseInt(current.format("DDDD"));
-        if (holidays[index]){
-            return true
-        }
         if (!dates || dates.length === 0) {
             return false;
         }
-        const tooLate = dates[0] && !current.isSame(dates[0], 'years');
-        const tooEarly = dates[1] && !dates[1].isSame(current, 'years');
-        return tooEarly || tooLate;
+        const isDiffYear0 = dates[0] && !current.isSame(dates[0], 'years');
+        const isDiffYear1 = dates[1] && !dates[1].isSame(current, 'years');
+        return isDiffYear0 || isDiffYear1 || holidays[index];
     };
 
     const formItemLayout = {

@@ -17,7 +17,8 @@ const ActionButton = (props) => {
         e.stopPropagation();
         updateStatus(props.rowKey, constant.RequestAction.CANCEL, user.role);
         let data = getDataByUser(user);
-        props.setRequest(data)
+        props.setLeave(getLeave());
+        props.setRequest(data);
         message.success("Request Rejected")
     };
     const handleAccept = (e) => {
@@ -40,7 +41,8 @@ const ActionButton = (props) => {
                     Reject
                 </a>
             </div>
-        } else if (data.status === constant.RequestStatus.CANCELING) {
+        } else if (data.status === constant.RequestStatus.CANCELING &&
+            (moment(data.end).startOf('day').diff(moment().startOf('day')) > 0 )) {
             return <div>
                 <a style={{marginRight: 16}} onClick={handleAccept}>
                     Accept

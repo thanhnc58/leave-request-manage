@@ -51,7 +51,7 @@ export function updateStatus(key, action, role) {
         [constant.RequestStatus.APPROVED, constant.Role.USER, constant.RequestAction.CANCEL, constant.RequestStatus.CANCELED],
         [constant.RequestStatus.CANCELING, constant.Role.ADMIN, constant.RequestAction.ACCEPT, constant.RequestStatus.CANCELED]
     ];
-    if (moment().diff(moment(data[index].start)) > 0){
+    if (moment().startOf('day').diff(moment(data[index].start).startOf('day')) > 0){
         statusTransition[3] = [constant.RequestStatus.APPROVED, constant.Role.USER, constant.RequestAction.CANCEL, constant.RequestStatus.CANCELING]
     }
     for (let item of statusTransition) {

@@ -93,14 +93,14 @@ export function getNumberTakenDay(from, to, halfStart, halfEnd) {
 // Return holidays or people who leaved on a specific day
 export function getDayDetail(date) {
     // We only care about compare date, so set a fixed time in case the date is equal
-    date = date.set("hour", 10);
+    date = date.startOf('day');
     let holidays = getHoliday();
     let matchHoliday = [];
     for (let holiday of holidays){
         let [start, end] = holiday.date;
 
         // We only care about compare date, so set a fixed time in case the date is equal
-        let [t1, t2] = [moment(start).set("hour", 5),moment(end).set("hour", 15) ];
+        let [t1, t2] = [moment(start).startOf('day'),moment(end).startOf('day')];
         if (t1 <= date && t2 >= date){
             matchHoliday.push(holiday.name)
         }
@@ -117,7 +117,7 @@ export function getDayDetail(date) {
     let requests = getData();
     for (let request of requests) {
         // We only care about compare date, so set a fixed time in case the date is equal
-        let [t1, t2] = [moment(request.start).set("hour", 5),moment(request.end).set("hour", 15) ];
+        let [t1, t2] = [moment(request.start).startOf('day'),moment(request.end).startOf('day') ];
         if (t1 <= date &&  t2 >= date && (request.status === constant.RequestStatus.APPROVED || request.status === constant.RequestStatus.CANCELING)){
             matchRequest.add(request.name)
         }
